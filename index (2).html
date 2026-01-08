@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPEN 2026 - Concours de Pêche</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2e86ab 50%, #1a5276 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d3b4c 0%, #1a5276 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .header .dates {
+            margin-top: 10px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .nav-tab {
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1a5276;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-tab.active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #1a5276;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.8rem;
+        }
+
+        /* Formulaire inscription */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9, #1a5276);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #219a52, #1e8449);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        /* Liste des participants */
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .participant-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .participant-card:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .participant-card .name {
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .participant-card .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-icon.delete {
+            background: #ffebee;
+            color: #e74c3c;
+        }
+
+        .btn-icon.delete:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        /* Attribution des postes */
+        .attribution-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .attribution-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .secteur-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-top: 4px solid;
+        }
+
+        .secteur-box.carpodrome {
+            border-color: #e74c3c;
+        }
+
+        .secteur-box.grand-etang {
+            border-color: #27ae60;
+        }
+
+        .secteur-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .secteur-box.carpodrome .secteur-title {
+            color: #e74c3c;
+        }
+
+        .secteur-box.grand-etang .secteur-title {
+            color: #27ae60;
+        }
+
+        .poste-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .poste-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .carpodrome .poste-number {
+            background: #e74c3c;
+        }
+
+        .grand-etang .poste-number {
+            background: #27ae60;
+        }
+
+        .poste-select {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        /* Pesées */
+        .pesee-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .pesee-table th, .pesee-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pesee-table th {
+            background: #1a5276;
+            color: white;
+            font-weight: 500;
+        }
+
+        .pesee-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .pesee-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .pesee-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .pesee-table input {
+            width: 100px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .pesee-table input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .secteur-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .secteur-badge.carpodrome {
+            background: #ffebee;
+            color: #e74c3c;
+        }
+
+        .secteur-badge.grand-etang {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        /* Résultats */
+        .results-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .result-tab.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .result-tab:hover:not(.active) {
+            background: #ddd;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table th, .results-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .results-table th {
+            background: linear-gradient(135deg, #1a5276, #2e86ab);
+            color: white;
+        }
+
+        .results-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .results-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .rank {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #ffd700, #ffb300);
+            color: #5d4e00;
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+            color: #404040;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #cd7f32, #a0522d);
+            color: white;
+        }
+
+        .rank-other {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .weight {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1a5276;
+        }
+
+        /* Status indicators */
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a5276;
+        }
+
+        .status-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                width: 100%;
+                text-align: center;
+            }
+
+            .pesee-table {
+                font-size: 0.9rem;
+            }
+
+            .pesee-table th, .pesee-table td {
+                padding: 8px;
+            }
+
+            .status-bar {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .nav-tabs, .btn, .admin-accordion, .header, .status-bar {
+                display: none !important;
+            }
+
+            .section {
+                display: block !important;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            body {
+                background: white;
+            }
+        }
+
+        .day-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .day-btn {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .day-btn.active {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+
+        .day-btn .day-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a5276;
+        }
+
+        .day-btn .day-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1565c0;
+        }
+
+        .counter {
+            display: inline-block;
+            background: #1a5276;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        /* Admin Accordion */
+        .admin-accordion {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-toggle {
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .admin-toggle:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .admin-content {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+
+        .admin-content.open {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .admin-block {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+        }
+
+        .admin-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .admin-block-title {
+            color: #495057;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .admin-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .admin-form .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .admin-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎣 OPEN 2026</h1>
+        <p class="subtitle">Concours de Pêche sur 2 Jours</p>
+        <div class="dates">📅 26 - 27 Septembre 2026</div>
+    </div>
+
+    <div class="container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-value" id="totalParticipants">0</div>
+                <div class="status-label">Participants</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="carpodromCount">0</div>
+                <div class="status-label">Carpodrome</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="grandEtangCount">0</div>
+                <div class="status-label">Grand Étang</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="peseesJ1Count">0</div>
+                <div class="status-label">Pesées J1</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="peseesJ2Count">0</div>
+                <div class="status-label">Pesées J2</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-section="inscription">📝 Inscription</button>
+            <button class="nav-tab" data-section="attribution-j1">🎯 Attribution J1</button>
+            <button class="nav-tab" data-section="attribution-j2">🎯 Attribution J2</button>
+            <button class="nav-tab" data-section="pesees-j1">⚖️ Pesées J1</button>
+            <button class="nav-tab" data-section="pesees-j2">⚖️ Pesées J2</button>
+            <button class="nav-tab" data-section="resultats">🏆 Résultats</button>
+        </div>
+
+        <!-- Messages -->
+        <div id="message" class="message"></div>
+
+        <!-- Section Inscription -->
+        <div id="inscription" class="section active">
+            <h2 class="section-title"><span class="icon">📝</span> Inscription des Participants <span class="counter" id="inscriptionCounter">0/14</span></h2>
+            
+            <div class="form-group">
+                <label for="nomPecheur">Nom du pêcheur</label>
+                <input type="text" id="nomPecheur" placeholder="Entrez le nom du pêcheur" maxlength="50">
+            </div>
+            
+            <button class="btn btn-primary" onclick="ajouterParticipant()">
+                ➕ Ajouter le participant
+            </button>
+
+            <div id="listeParticipants" class="participants-grid"></div>
+        </div>
+
+        <!-- Section Attribution J1 -->
+        <div id="attribution-j1" class="section">
+            <h2 class="section-title"><span class="icon">🎯</span> Attribution des Postes - Jour 1 (26/09/2026)</h2>
+            
+            <div class="info-box">
+                <p>📌 Attribuez manuellement un secteur et un poste (1-7) à chaque pêcheur après le tirage au sort.</p>
+            </div>
+
+            <div id="attributionJ1Container" class="attribution-container">
+                <div class="secteur-box carpodrome">
+                    <h3 class="secteur-title">🔴 Secteur Carpodrome</h3>
+                    <div id="postesCarpodromeJ1"></div>
+                </div>
+                <div class="secteur-box grand-etang">
+                    <h3 class="secteur-title">🟢 Secteur Grand Étang</h3>
+                    <div id="postesGrandEtangJ1"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-success" onclick="sauvegarderAttributionJ1()">
+                    💾 Sauvegarder l'attribution J1
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Attribution J2 -->
+        <div id="attribution-j2" class="section">
+            <h2 class="section-title"><span class="icon">🎯</span> Attribution des Postes - Jour 2 (27/09/2026)</h2>
+            
+            <div class="info-box">
+                <p>📌 Les pêcheurs ont automatiquement changé de secteur. Attribuez uniquement les nouveaux postes (1-7).</p>
+            </div>
+
+            <div id="attributionJ2Container" class="attribution-container">
+                <div class="secteur-box carpodrome">
+                    <h3 class="secteur-title">🔴 Secteur Carpodrome <small>(ex Grand Étang J1)</small></h3>
+                    <div id="postesCarpodromeJ2"></div>
+                </div>
+                <div class="secteur-box grand-etang">
+                    <h3 class="secteur-title">🟢 Secteur Grand Étang <small>(ex Carpodrome J1)</small></h3>
+                    <div id="postesGrandEtangJ2"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-success" onclick="sauvegarderAttributionJ2()">
+                    💾 Sauvegarder l'attribution J2
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Pesées J1 -->
+        <div id="pesees-j1" class="section">
+            <h2 class="section-title"><span class="icon">⚖️</span> Pesées - Jour 1 (26/09/2026)</h2>
+            
+            <table class="pesee-table">
+                <thead>
+                    <tr>
+                        <th>Secteur</th>
+                        <th>Poste</th>
+                        <th>Pêcheur</th>
+                        <th>Poids (kg)</th>
+                    </tr>
+                </thead>
+                <tbody id="peseesJ1Body"></tbody>
+            </table>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-success" onclick="sauvegarderPeseesJ1()">
+                    💾 Sauvegarder les pesées J1
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Pesées J2 -->
+        <div id="pesees-j2" class="section">
+            <h2 class="section-title"><span class="icon">⚖️</span> Pesées - Jour 2 (27/09/2026)</h2>
+            
+            <table class="pesee-table">
+                <thead>
+                    <tr>
+                        <th>Secteur</th>
+                        <th>Poste</th>
+                        <th>Pêcheur</th>
+                        <th>Poids (kg)</th>
+                    </tr>
+                </thead>
+                <tbody id="peseesJ2Body"></tbody>
+            </table>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-success" onclick="sauvegarderPeseesJ2()">
+                    💾 Sauvegarder les pesées J2
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Résultats -->
+        <div id="resultats" class="section">
+            <h2 class="section-title"><span class="icon">🏆</span> Résultats</h2>
+            
+            <div class="results-tabs">
+                <button class="result-tab active" data-result="jour1">📅 Jour 1</button>
+                <button class="result-tab" data-result="jour2">📅 Jour 2</button>
+                <button class="result-tab" data-result="general">🏆 Classement Général</button>
+            </div>
+
+            <div id="resultJour1" class="result-content">
+                <h3 style="margin-bottom: 15px; color: #1a5276;">Classement Jour 1 - 26 Septembre 2026</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Pêcheur</th>
+                            <th>Secteur</th>
+                            <th>Poste</th>
+                            <th>Poids</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsJ1Body"></tbody>
+                </table>
+            </div>
+
+            <div id="resultJour2" class="result-content" style="display: none;">
+                <h3 style="margin-bottom: 15px; color: #1a5276;">Classement Jour 2 - 27 Septembre 2026</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Pêcheur</th>
+                            <th>Secteur</th>
+                            <th>Poste</th>
+                            <th>Poids</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsJ2Body"></tbody>
+                </table>
+            </div>
+
+            <div id="resultGeneral" class="result-content" style="display: none;">
+                <h3 style="margin-bottom: 15px; color: #1a5276;">🏆 Classement Général - Cumul des 2 Jours</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Rang</th>
+                            <th>Pêcheur</th>
+                            <th>Poids J1</th>
+                            <th>Poids J2</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsGeneralBody"></tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Imprimer les résultats
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Section - Accordéon -->
+        <div class="admin-accordion">
+            <button class="admin-toggle" onclick="toggleAdmin()">
+                <span>⚙️ Administration 🔒</span>
+                <span class="toggle-icon" id="adminToggleIcon">▼</span>
+            </button>
+            <div class="admin-content" id="adminContent">
+                <!-- Personnalisation -->
+                <div class="admin-block">
+                    <h4 class="admin-block-title">🎨 Personnalisation</h4>
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label for="titreEvt">Titre de l'événement</label>
+                            <input type="text" id="titreEvt" placeholder="OPEN 2026" maxlength="50">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dateJ1">Date Jour 1</label>
+                                <input type="date" id="dateJ1">
+                            </div>
+                            <div class="form-group">
+                                <label for="dateJ2">Date Jour 2</label>
+                                <input type="date" id="dateJ2">
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="sauvegarderParametres()">
+                            💾 Sauvegarder les paramètres
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sécurité -->
+                <div class="admin-block">
+                    <h4 class="admin-block-title">🔐 Sécurité</h4>
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label for="newPassword">Nouveau mot de passe admin</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="password" id="newPassword" placeholder="Entrez le nouveau mot de passe" style="flex: 1;">
+                                <button class="btn btn-primary" onclick="changerMotDePasse()">
+                                    🔑 Modifier
+                                </button>
+                            </div>
+                            <small style="color: #666; margin-top: 5px; display: block;">Mot de passe actuel : <span id="currentPasswordHint">****</span></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Réinitialisations -->
+                <div class="admin-block">
+                    <h4 class="admin-block-title">🔄 Réinitialisations</h4>
+                    <div class="admin-buttons">
+                        <button class="btn btn-warning" onclick="reinitialiserJ1()">🔄 Réinitialiser J1</button>
+                        <button class="btn btn-warning" onclick="reinitialiserJ2()">🔄 Réinitialiser J2</button>
+                        <button class="btn btn-danger" onclick="reinitialiserTout()">🗑️ Tout réinitialiser</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Configuration Firebase (même projet que Concours-carpodrome)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKcwgVSkqAfOl0C7ywpS4sKbDPpcsrnmw",
+            authDomain: "enduro-gundershoffen.firebaseapp.com",
+            databaseURL: "https://enduro-gundershoffen-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "enduro-gundershoffen",
+            storageBucket: "enduro-gundershoffen.appspot.com",
+            messagingSenderId: "957498107874",
+            appId: "1:957498107874:web:f4e2d4e8c8e9e8e8e8e8e8"
+        };
+
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const dbRef = database.ref('open-2026');
+
+        // Variables globales
+        let participants = [];
+        let attributionJ1 = { carpodrome: {}, grandEtang: {} };
+        let attributionJ2 = { carpodrome: {}, grandEtang: {} };
+        let peseesJ1 = {};
+        let peseesJ2 = {};
+        let parametres = {
+            titre: 'OPEN 2026',
+            dateJ1: '2026-09-26',
+            dateJ2: '2026-09-27',
+            motDePasseAdmin: 'admin'
+        };
+
+        // Protection Admin
+        let adminUnlocked = false;
+        const MOT_DE_PASSE_ADMIN = 'admin'; // Mot de passe par défaut
+
+        // Toggle Admin Accordion
+        function toggleAdmin() {
+            const content = document.getElementById('adminContent');
+            const icon = document.getElementById('adminToggleIcon');
+            
+            // Si déjà ouvert, on ferme simplement
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.classList.remove('open');
+                return;
+            }
+            
+            // Si pas encore déverrouillé, demander le mot de passe
+            if (!adminUnlocked) {
+                const motDePasse = prompt('🔐 Entrez le mot de passe administrateur :');
+                
+                if (motDePasse === null) {
+                    // Annulé
+                    return;
+                }
+                
+                // Vérifier le mot de passe (depuis Firebase ou par défaut)
+                const mdpCorrect = parametres.motDePasseAdmin || MOT_DE_PASSE_ADMIN;
+                
+                if (motDePasse !== mdpCorrect) {
+                    showMessage('❌ Mot de passe incorrect', 'error');
+                    return;
+                }
+                
+                adminUnlocked = true;
+                showMessage('✅ Accès administrateur accordé', 'success');
+            }
+            
+            // Ouvrir l'accordéon
+            content.classList.add('open');
+            icon.classList.add('open');
+        }
+
+        // Formater date pour affichage
+        function formatDateFR(dateStr) {
+            if (!dateStr) return '';
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('fr-FR', options);
+        }
+
+        // Formater date courte
+        function formatDateShort(dateStr) {
+            if (!dateStr) return '';
+            const options = { day: '2-digit', month: '2-digit' };
+            return new Date(dateStr).toLocaleDateString('fr-FR', options);
+        }
+
+        // Mettre à jour l'affichage avec les paramètres
+        function appliquerParametres() {
+            // Titre principal
+            document.querySelector('.header h1').innerHTML = `🎣 ${parametres.titre}`;
+            
+            // Dates dans le header
+            const dateJ1Short = formatDateShort(parametres.dateJ1);
+            const dateJ2Short = formatDateShort(parametres.dateJ2);
+            const annee = parametres.dateJ1 ? new Date(parametres.dateJ1).getFullYear() : '2026';
+            document.querySelector('.header .dates').innerHTML = `📅 ${dateJ1Short} - ${dateJ2Short} ${annee}`;
+            
+            // Titres des sections
+            const dateJ1Full = formatDateFR(parametres.dateJ1);
+            const dateJ2Full = formatDateFR(parametres.dateJ2);
+            
+            document.querySelector('#attribution-j1 .section-title').innerHTML = 
+                `<span class="icon">🎯</span> Attribution des Postes - Jour 1 (${dateJ1Short})`;
+            document.querySelector('#attribution-j2 .section-title').innerHTML = 
+                `<span class="icon">🎯</span> Attribution des Postes - Jour 2 (${dateJ2Short})`;
+            document.querySelector('#pesees-j1 .section-title').innerHTML = 
+                `<span class="icon">⚖️</span> Pesées - Jour 1 (${dateJ1Short})`;
+            document.querySelector('#pesees-j2 .section-title').innerHTML = 
+                `<span class="icon">⚖️</span> Pesées - Jour 2 (${dateJ2Short})`;
+            
+            // Titres résultats
+            document.querySelector('#resultJour1 h3').textContent = `Classement Jour 1 - ${dateJ1Full}`;
+            document.querySelector('#resultJour2 h3').textContent = `Classement Jour 2 - ${dateJ2Full}`;
+            
+            // Remplir les champs du formulaire admin
+            document.getElementById('titreEvt').value = parametres.titre;
+            document.getElementById('dateJ1').value = parametres.dateJ1;
+            document.getElementById('dateJ2').value = parametres.dateJ2;
+            
+            // Afficher indice mot de passe
+            const mdp = parametres.motDePasseAdmin || MOT_DE_PASSE_ADMIN;
+            document.getElementById('currentPasswordHint').textContent = mdp.charAt(0) + '***';
+        }
+
+        // Sauvegarder les paramètres
+        function sauvegarderParametres() {
+            parametres.titre = document.getElementById('titreEvt').value.trim() || 'OPEN 2026';
+            parametres.dateJ1 = document.getElementById('dateJ1').value || '2026-09-26';
+            parametres.dateJ2 = document.getElementById('dateJ2').value || '2026-09-27';
+            
+            dbRef.child('parametres').set(parametres);
+            appliquerParametres();
+            showMessage('Paramètres sauvegardés!', 'success');
+        }
+
+        // Changer le mot de passe admin
+        function changerMotDePasse() {
+            const newPassword = document.getElementById('newPassword').value.trim();
+            
+            if (!newPassword) {
+                showMessage('Veuillez entrer un nouveau mot de passe', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 4) {
+                showMessage('Le mot de passe doit contenir au moins 4 caractères', 'error');
+                return;
+            }
+            
+            if (!confirm('Confirmer le changement de mot de passe ?')) {
+                return;
+            }
+            
+            parametres.motDePasseAdmin = newPassword;
+            dbRef.child('parametres').set(parametres);
+            
+            document.getElementById('newPassword').value = '';
+            document.getElementById('currentPasswordHint').textContent = newPassword.charAt(0) + '***';
+            
+            showMessage('✅ Mot de passe modifié avec succès!', 'success');
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.section).classList.add('active');
+            });
+        });
+
+        // Navigation résultats
+        document.querySelectorAll('.result-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.result-content').forEach(c => c.style.display = 'none');
+                tab.classList.add('active');
+                document.getElementById('result' + capitalizeFirst(tab.dataset.result)).style.display = 'block';
+            });
+        });
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Afficher message
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + type + ' show';
+            setTimeout(() => {
+                msg.classList.remove('show');
+            }, 3000);
+        }
+
+        // Entrée clavier pour ajout participant
+        document.getElementById('nomPecheur').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                ajouterParticipant();
+            }
+        });
+
+        // INSCRIPTION
+        function ajouterParticipant() {
+            const nom = document.getElementById('nomPecheur').value.trim();
+            if (!nom) {
+                showMessage('Veuillez entrer un nom', 'error');
+                return;
+            }
+            if (participants.length >= 14) {
+                showMessage('Maximum 14 participants atteint', 'error');
+                return;
+            }
+            if (participants.some(p => p.nom.toLowerCase() === nom.toLowerCase())) {
+                showMessage('Ce participant existe déjà', 'error');
+                return;
+            }
+
+            const participant = {
+                id: Date.now().toString(),
+                nom: nom
+            };
+            participants.push(participant);
+            sauvegarderParticipants();
+            document.getElementById('nomPecheur').value = '';
+            document.getElementById('nomPecheur').focus();
+            showMessage(`${nom} ajouté avec succès`, 'success');
+        }
+
+        function supprimerParticipant(id) {
+            if (!confirm('Supprimer ce participant ?')) return;
+            participants = participants.filter(p => p.id !== id);
+            sauvegarderParticipants();
+            showMessage('Participant supprimé', 'success');
+        }
+
+        function sauvegarderParticipants() {
+            dbRef.child('participants').set(participants);
+            afficherParticipants();
+            mettreAJourAttributions();
+            mettreAJourStatus();
+        }
+
+        function afficherParticipants() {
+            const container = document.getElementById('listeParticipants');
+            container.innerHTML = participants.map(p => `
+                <div class="participant-card">
+                    <span class="name">${p.nom}</span>
+                    <div class="actions">
+                        <button class="btn-icon delete" onclick="supprimerParticipant('${p.id}')" title="Supprimer">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('inscriptionCounter').textContent = `${participants.length}/14`;
+        }
+
+        // ATTRIBUTION J1
+        function mettreAJourAttributions() {
+            genererAttributionJ1();
+            genererAttributionJ2();
+            genererPeseesJ1();
+            genererPeseesJ2();
+        }
+
+        function genererAttributionJ1() {
+            const carpoContainer = document.getElementById('postesCarpodromeJ1');
+            const etangContainer = document.getElementById('postesGrandEtangJ1');
+            
+            let carpoHTML = '';
+            let etangHTML = '';
+
+            for (let i = 1; i <= 7; i++) {
+                carpoHTML += `
+                    <div class="poste-row">
+                        <div class="poste-number">${i}</div>
+                        <select class="poste-select" id="carpoJ1_${i}" onchange="verifierDoublonJ1()">
+                            <option value="">-- Sélectionner --</option>
+                            ${participants.map(p => `<option value="${p.id}" ${attributionJ1.carpodrome[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+                etangHTML += `
+                    <div class="poste-row">
+                        <div class="poste-number">${i}</div>
+                        <select class="poste-select" id="etangJ1_${i}" onchange="verifierDoublonJ1()">
+                            <option value="">-- Sélectionner --</option>
+                            ${participants.map(p => `<option value="${p.id}" ${attributionJ1.grandEtang[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            carpoContainer.innerHTML = carpoHTML;
+            etangContainer.innerHTML = etangHTML;
+        }
+
+        function verifierDoublonJ1() {
+            const selects = document.querySelectorAll('#attribution-j1 select');
+            const values = [];
+            selects.forEach(s => {
+                if (s.value) {
+                    if (values.includes(s.value)) {
+                        showMessage('Attention: Un pêcheur est assigné plusieurs fois!', 'error');
+                        s.style.borderColor = '#e74c3c';
+                    } else {
+                        s.style.borderColor = '#ddd';
+                    }
+                    values.push(s.value);
+                }
+            });
+        }
+
+        function sauvegarderAttributionJ1() {
+            // Récupérer les valeurs
+            const newAttribution = { carpodrome: {}, grandEtang: {} };
+            
+            for (let i = 1; i <= 7; i++) {
+                const carpoSelect = document.getElementById(`carpoJ1_${i}`);
+                const etangSelect = document.getElementById(`etangJ1_${i}`);
+                
+                if (carpoSelect && carpoSelect.value) {
+                    newAttribution.carpodrome[i] = carpoSelect.value;
+                }
+                if (etangSelect && etangSelect.value) {
+                    newAttribution.grandEtang[i] = etangSelect.value;
+                }
+            }
+
+            // Vérifier les doublons
+            const allValues = [...Object.values(newAttribution.carpodrome), ...Object.values(newAttribution.grandEtang)];
+            const uniqueValues = new Set(allValues);
+            if (allValues.length !== uniqueValues.size) {
+                showMessage('Erreur: Un pêcheur est assigné plusieurs fois!', 'error');
+                return;
+            }
+
+            attributionJ1 = newAttribution;
+            dbRef.child('attributionJ1').set(attributionJ1);
+            
+            // Générer automatiquement l'attribution J2 (inversion des secteurs)
+            genererAttributionJ2Auto();
+            
+            showMessage('Attribution J1 sauvegardée!', 'success');
+            mettreAJourStatus();
+            genererPeseesJ1();
+        }
+
+        // ATTRIBUTION J2
+        function genererAttributionJ2Auto() {
+            // Les pêcheurs qui étaient au Carpodrome J1 vont au Grand Étang J2
+            // Les pêcheurs qui étaient au Grand Étang J1 vont au Carpodrome J2
+            
+            // Récupérer les IDs des pêcheurs par secteur J1
+            const pecheursCarpoJ1 = Object.values(attributionJ1.carpodrome);
+            const pecheursEtangJ1 = Object.values(attributionJ1.grandEtang);
+            
+            // J2: les pêcheurs du Carpodrome J1 vont au Grand Étang J2 (sans poste attribué)
+            // J2: les pêcheurs du Grand Étang J1 vont au Carpodrome J2 (sans poste attribué)
+            
+            attributionJ2 = {
+                carpodrome: {}, // Sera rempli avec les pêcheurs ex-Grand Étang J1
+                grandEtang: {}, // Sera rempli avec les pêcheurs ex-Carpodrome J1
+                pecheursCarpoJ2: pecheursEtangJ1, // Liste des IDs pour Carpodrome J2
+                pecheursEtangJ2: pecheursCarpoJ1  // Liste des IDs pour Grand Étang J2
+            };
+
+            dbRef.child('attributionJ2').set(attributionJ2);
+            genererAttributionJ2();
+        }
+
+        function genererAttributionJ2() {
+            const carpoContainer = document.getElementById('postesCarpodromeJ2');
+            const etangContainer = document.getElementById('postesGrandEtangJ2');
+            
+            // Pêcheurs disponibles pour chaque secteur J2
+            const pecheursCarpoJ2 = attributionJ2.pecheursCarpoJ2 || Object.values(attributionJ1.grandEtang);
+            const pecheursEtangJ2 = attributionJ2.pecheursEtangJ2 || Object.values(attributionJ1.carpodrome);
+
+            let carpoHTML = '';
+            let etangHTML = '';
+
+            for (let i = 1; i <= 7; i++) {
+                const participantsCarpo = participants.filter(p => pecheursCarpoJ2.includes(p.id));
+                const participantsEtang = participants.filter(p => pecheursEtangJ2.includes(p.id));
+
+                carpoHTML += `
+                    <div class="poste-row">
+                        <div class="poste-number">${i}</div>
+                        <select class="poste-select" id="carpoJ2_${i}" onchange="verifierDoublonJ2()">
+                            <option value="">-- Sélectionner --</option>
+                            ${participantsCarpo.map(p => `<option value="${p.id}" ${attributionJ2.carpodrome[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+                etangHTML += `
+                    <div class="poste-row">
+                        <div class="poste-number">${i}</div>
+                        <select class="poste-select" id="etangJ2_${i}" onchange="verifierDoublonJ2()">
+                            <option value="">-- Sélectionner --</option>
+                            ${participantsEtang.map(p => `<option value="${p.id}" ${attributionJ2.grandEtang[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            carpoContainer.innerHTML = carpoHTML || '<p style="color: #999;">Veuillez d\'abord compléter l\'attribution J1</p>';
+            etangContainer.innerHTML = etangHTML || '<p style="color: #999;">Veuillez d\'abord compléter l\'attribution J1</p>';
+        }
+
+        function verifierDoublonJ2() {
+            const selects = document.querySelectorAll('#attribution-j2 select');
+            const valuesCarpodrome = [];
+            const valuesEtang = [];
+            
+            selects.forEach(s => {
+                if (s.value) {
+                    const isCarpodrome = s.id.startsWith('carpoJ2');
+                    const values = isCarpodrome ? valuesCarpodrome : valuesEtang;
+                    
+                    if (values.includes(s.value)) {
+                        showMessage('Attention: Un pêcheur est assigné plusieurs fois dans ce secteur!', 'error');
+                        s.style.borderColor = '#e74c3c';
+                    } else {
+                        s.style.borderColor = '#ddd';
+                    }
+                    values.push(s.value);
+                }
+            });
+        }
+
+        function sauvegarderAttributionJ2() {
+            for (let i = 1; i <= 7; i++) {
+                const carpoSelect = document.getElementById(`carpoJ2_${i}`);
+                const etangSelect = document.getElementById(`etangJ2_${i}`);
+                
+                if (carpoSelect && carpoSelect.value) {
+                    attributionJ2.carpodrome[i] = carpoSelect.value;
+                }
+                if (etangSelect && etangSelect.value) {
+                    attributionJ2.grandEtang[i] = etangSelect.value;
+                }
+            }
+
+            dbRef.child('attributionJ2').set(attributionJ2);
+            showMessage('Attribution J2 sauvegardée!', 'success');
+            mettreAJourStatus();
+            genererPeseesJ2();
+        }
+
+        // PESEES J1
+        function genererPeseesJ1() {
+            const tbody = document.getElementById('peseesJ1Body');
+            let html = '';
+
+            // Carpodrome
+            for (let i = 1; i <= 7; i++) {
+                const pecheurId = attributionJ1.carpodrome[i];
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    html += `
+                        <tr>
+                            <td><span class="secteur-badge carpodrome">Carpodrome</span></td>
+                            <td>${i}</td>
+                            <td>${pecheur.nom}</td>
+                            <td>
+                                <input type="number" step="0.01" min="0" id="peseeJ1_${pecheurId}" 
+                                    value="${peseesJ1[pecheurId] || ''}" 
+                                    placeholder="0.00">
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            // Grand Étang
+            for (let i = 1; i <= 7; i++) {
+                const pecheurId = attributionJ1.grandEtang[i];
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    html += `
+                        <tr>
+                            <td><span class="secteur-badge grand-etang">Grand Étang</span></td>
+                            <td>${i}</td>
+                            <td>${pecheur.nom}</td>
+                            <td>
+                                <input type="number" step="0.01" min="0" id="peseeJ1_${pecheurId}" 
+                                    value="${peseesJ1[pecheurId] || ''}" 
+                                    placeholder="0.00">
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Veuillez d\'abord attribuer les postes J1</td></tr>';
+        }
+
+        function sauvegarderPeseesJ1() {
+            const inputs = document.querySelectorAll('[id^="peseeJ1_"]');
+            peseesJ1 = {};
+            
+            inputs.forEach(input => {
+                const pecheurId = input.id.replace('peseeJ1_', '');
+                const poids = parseFloat(input.value) || 0;
+                if (poids > 0) {
+                    peseesJ1[pecheurId] = poids;
+                }
+            });
+
+            dbRef.child('peseesJ1').set(peseesJ1);
+            showMessage('Pesées J1 sauvegardées!', 'success');
+            mettreAJourStatus();
+            afficherResultats();
+        }
+
+        // PESEES J2
+        function genererPeseesJ2() {
+            const tbody = document.getElementById('peseesJ2Body');
+            let html = '';
+
+            // Carpodrome J2
+            for (let i = 1; i <= 7; i++) {
+                const pecheurId = attributionJ2.carpodrome[i];
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    html += `
+                        <tr>
+                            <td><span class="secteur-badge carpodrome">Carpodrome</span></td>
+                            <td>${i}</td>
+                            <td>${pecheur.nom}</td>
+                            <td>
+                                <input type="number" step="0.01" min="0" id="peseeJ2_${pecheurId}" 
+                                    value="${peseesJ2[pecheurId] || ''}" 
+                                    placeholder="0.00">
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            // Grand Étang J2
+            for (let i = 1; i <= 7; i++) {
+                const pecheurId = attributionJ2.grandEtang[i];
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    html += `
+                        <tr>
+                            <td><span class="secteur-badge grand-etang">Grand Étang</span></td>
+                            <td>${i}</td>
+                            <td>${pecheur.nom}</td>
+                            <td>
+                                <input type="number" step="0.01" min="0" id="peseeJ2_${pecheurId}" 
+                                    value="${peseesJ2[pecheurId] || ''}" 
+                                    placeholder="0.00">
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Veuillez d\'abord attribuer les postes J2</td></tr>';
+        }
+
+        function sauvegarderPeseesJ2() {
+            const inputs = document.querySelectorAll('[id^="peseeJ2_"]');
+            peseesJ2 = {};
+            
+            inputs.forEach(input => {
+                const pecheurId = input.id.replace('peseeJ2_', '');
+                const poids = parseFloat(input.value) || 0;
+                if (poids > 0) {
+                    peseesJ2[pecheurId] = poids;
+                }
+            });
+
+            dbRef.child('peseesJ2').set(peseesJ2);
+            showMessage('Pesées J2 sauvegardées!', 'success');
+            mettreAJourStatus();
+            afficherResultats();
+        }
+
+        // RESULTATS
+        function afficherResultats() {
+            afficherResultatsJ1();
+            afficherResultatsJ2();
+            afficherResultatsGeneral();
+        }
+
+        function afficherResultatsJ1() {
+            const tbody = document.getElementById('resultsJ1Body');
+            
+            // Créer liste avec tous les pêcheurs et leurs infos J1
+            const resultats = [];
+            
+            // Carpodrome
+            Object.entries(attributionJ1.carpodrome).forEach(([poste, pecheurId]) => {
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    resultats.push({
+                        nom: pecheur.nom,
+                        secteur: 'Carpodrome',
+                        poste: poste,
+                        poids: peseesJ1[pecheurId] || 0
+                    });
+                }
+            });
+            
+            // Grand Étang
+            Object.entries(attributionJ1.grandEtang).forEach(([poste, pecheurId]) => {
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    resultats.push({
+                        nom: pecheur.nom,
+                        secteur: 'Grand Étang',
+                        poste: poste,
+                        poids: peseesJ1[pecheurId] || 0
+                    });
+                }
+            });
+
+            // Trier par poids décroissant
+            resultats.sort((a, b) => b.poids - a.poids);
+
+            tbody.innerHTML = resultats.map((r, index) => `
+                <tr>
+                    <td><div class="rank ${getRankClass(index + 1)}">${index + 1}</div></td>
+                    <td>${r.nom}</td>
+                    <td><span class="secteur-badge ${r.secteur === 'Carpodrome' ? 'carpodrome' : 'grand-etang'}">${r.secteur}</span></td>
+                    <td>${r.poste}</td>
+                    <td class="weight">${r.poids.toFixed(2)} kg</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" style="text-align: center;">Aucune pesée enregistrée</td></tr>';
+        }
+
+        function afficherResultatsJ2() {
+            const tbody = document.getElementById('resultsJ2Body');
+            
+            const resultats = [];
+            
+            // Carpodrome J2
+            Object.entries(attributionJ2.carpodrome).forEach(([poste, pecheurId]) => {
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    resultats.push({
+                        nom: pecheur.nom,
+                        secteur: 'Carpodrome',
+                        poste: poste,
+                        poids: peseesJ2[pecheurId] || 0
+                    });
+                }
+            });
+            
+            // Grand Étang J2
+            Object.entries(attributionJ2.grandEtang).forEach(([poste, pecheurId]) => {
+                const pecheur = participants.find(p => p.id === pecheurId);
+                if (pecheur) {
+                    resultats.push({
+                        nom: pecheur.nom,
+                        secteur: 'Grand Étang',
+                        poste: poste,
+                        poids: peseesJ2[pecheurId] || 0
+                    });
+                }
+            });
+
+            resultats.sort((a, b) => b.poids - a.poids);
+
+            tbody.innerHTML = resultats.map((r, index) => `
+                <tr>
+                    <td><div class="rank ${getRankClass(index + 1)}">${index + 1}</div></td>
+                    <td>${r.nom}</td>
+                    <td><span class="secteur-badge ${r.secteur === 'Carpodrome' ? 'carpodrome' : 'grand-etang'}">${r.secteur}</span></td>
+                    <td>${r.poste}</td>
+                    <td class="weight">${r.poids.toFixed(2)} kg</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" style="text-align: center;">Aucune pesée enregistrée</td></tr>';
+        }
+
+        function afficherResultatsGeneral() {
+            const tbody = document.getElementById('resultsGeneralBody');
+            
+            // Cumul des poids J1 + J2 par pêcheur
+            const resultats = participants.map(p => {
+                const poidsJ1 = peseesJ1[p.id] || 0;
+                const poidsJ2 = peseesJ2[p.id] || 0;
+                return {
+                    nom: p.nom,
+                    poidsJ1: poidsJ1,
+                    poidsJ2: poidsJ2,
+                    total: poidsJ1 + poidsJ2
+                };
+            });
+
+            // Trier par total décroissant
+            resultats.sort((a, b) => b.total - a.total);
+
+            tbody.innerHTML = resultats.map((r, index) => `
+                <tr>
+                    <td><div class="rank ${getRankClass(index + 1)}">${index + 1}</div></td>
+                    <td>${r.nom}</td>
+                    <td>${r.poidsJ1.toFixed(2)} kg</td>
+                    <td>${r.poidsJ2.toFixed(2)} kg</td>
+                    <td class="weight">${r.total.toFixed(2)} kg</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" style="text-align: center;">Aucun participant</td></tr>';
+        }
+
+        function getRankClass(rank) {
+            if (rank === 1) return 'rank-1';
+            if (rank === 2) return 'rank-2';
+            if (rank === 3) return 'rank-3';
+            return 'rank-other';
+        }
+
+        // STATUS
+        function mettreAJourStatus() {
+            document.getElementById('totalParticipants').textContent = participants.length;
+            document.getElementById('carpodromCount').textContent = Object.keys(attributionJ1.carpodrome).length;
+            document.getElementById('grandEtangCount').textContent = Object.keys(attributionJ1.grandEtang).length;
+            document.getElementById('peseesJ1Count').textContent = Object.keys(peseesJ1).length;
+            document.getElementById('peseesJ2Count').textContent = Object.keys(peseesJ2).length;
+        }
+
+        // ADMIN - Réinitialisations
+        function reinitialiserJ1() {
+            if (!confirm('Réinitialiser l\'attribution et les pesées du Jour 1 ?')) return;
+            attributionJ1 = { carpodrome: {}, grandEtang: {} };
+            peseesJ1 = {};
+            dbRef.child('attributionJ1').set(attributionJ1);
+            dbRef.child('peseesJ1').set(peseesJ1);
+            mettreAJourAttributions();
+            mettreAJourStatus();
+            afficherResultats();
+            showMessage('Jour 1 réinitialisé', 'success');
+        }
+
+        function reinitialiserJ2() {
+            if (!confirm('Réinitialiser l\'attribution et les pesées du Jour 2 ?')) return;
+            attributionJ2 = { carpodrome: {}, grandEtang: {} };
+            peseesJ2 = {};
+            dbRef.child('attributionJ2').set(attributionJ2);
+            dbRef.child('peseesJ2').set(peseesJ2);
+            genererAttributionJ2Auto();
+            mettreAJourStatus();
+            afficherResultats();
+            showMessage('Jour 2 réinitialisé', 'success');
+        }
+
+        function reinitialiserTout() {
+            if (!confirm('ATTENTION: Supprimer TOUTES les données du concours ?')) return;
+            if (!confirm('Êtes-vous vraiment sûr ?')) return;
+            
+            participants = [];
+            attributionJ1 = { carpodrome: {}, grandEtang: {} };
+            attributionJ2 = { carpodrome: {}, grandEtang: {} };
+            peseesJ1 = {};
+            peseesJ2 = {};
+            
+            dbRef.set(null);
+            
+            afficherParticipants();
+            mettreAJourAttributions();
+            mettreAJourStatus();
+            afficherResultats();
+            showMessage('Toutes les données ont été supprimées', 'success');
+        }
+
+        // CHARGEMENT INITIAL
+        function chargerDonnees() {
+            dbRef.on('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                
+                participants = data.participants || [];
+                attributionJ1 = data.attributionJ1 || { carpodrome: {}, grandEtang: {} };
+                attributionJ2 = data.attributionJ2 || { carpodrome: {}, grandEtang: {} };
+                peseesJ1 = data.peseesJ1 || {};
+                peseesJ2 = data.peseesJ2 || {};
+                parametres = data.parametres || {
+                    titre: 'OPEN 2026',
+                    dateJ1: '2026-09-26',
+                    dateJ2: '2026-09-27',
+                    motDePasseAdmin: 'admin'
+                };
+
+                appliquerParametres();
+                afficherParticipants();
+                mettreAJourAttributions();
+                mettreAJourStatus();
+                afficherResultats();
+            });
+        }
+
+        // Démarrage
+        chargerDonnees();
+    </script>
+</body>
+</html>
