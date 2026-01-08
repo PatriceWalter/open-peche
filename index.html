@@ -149,6 +149,27 @@
                     });
                 });
                 return best;
+            },
+            
+            // Poids par secteur pour un jour
+            secteurDayWeight: (secteur, day) => {
+                const secteurKey = day === 1 ? 'secteurJ1' : 'secteurJ2';
+                return state.fishermen
+                    .filter(f => f[secteurKey] === secteur)
+                    .reduce((acc, f) => acc + calc.dayWeight(f, day), 0);
+            },
+            
+            // Poids total par secteur (2 jours)
+            secteurTotalWeight: (secteur) => {
+                // J1: poids des pêcheurs qui étaient dans ce secteur au J1
+                const poidsJ1 = state.fishermen
+                    .filter(f => f.secteurJ1 === secteur)
+                    .reduce((acc, f) => acc + calc.dayWeight(f, 1), 0);
+                // J2: poids des pêcheurs qui étaient dans ce secteur au J2
+                const poidsJ2 = state.fishermen
+                    .filter(f => f.secteurJ2 === secteur)
+                    .reduce((acc, f) => acc + calc.dayWeight(f, 2), 0);
+                return poidsJ1 + poidsJ2;
             }
         };
 
@@ -831,6 +852,23 @@
                         </div>
                     </div>
                     
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-red-600 p-6 rounded-[2rem] text-white shadow-xl flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Carpodrome</p>
+                                <p class="text-3xl font-black">${calc.secteurDayWeight('carpodrome', day).toFixed(3)} kg</p>
+                            </div>
+                            <span class="text-6xl opacity-20">🎣</span>
+                        </div>
+                        <div class="bg-emerald-600 p-6 rounded-[2rem] text-white shadow-xl flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Grand Étang</p>
+                                <p class="text-3xl font-black">${calc.secteurDayWeight('grand-etang', day).toFixed(3)} kg</p>
+                            </div>
+                            <span class="text-6xl opacity-20">🐟</span>
+                        </div>
+                    </div>
+                    
                     <div class="bg-white rounded-[2.5rem] shadow-xl border overflow-hidden">
                         <table class="w-full text-left">
                             <thead class="bg-blue-900 text-white text-[10px] uppercase font-black tracking-widest">
@@ -899,6 +937,25 @@
                             <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Record du Concours</p>
                             <p class="text-3xl font-black">${rec.w.toFixed(3)} kg</p>
                             <p class="text-[10px] font-black uppercase italic mt-1">${rec.n} ${rec.p}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-red-600 to-red-500 p-6 rounded-[2rem] text-white shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Total Carpodrome (2 jours)</p>
+                            <p class="text-3xl font-black">${calc.secteurTotalWeight('carpodrome').toFixed(3)} kg</p>
+                            <div class="flex gap-4 mt-2 text-xs opacity-70">
+                                <span>J1: ${calc.secteurDayWeight('carpodrome', 1).toFixed(3)} kg</span>
+                                <span>J2: ${calc.secteurDayWeight('carpodrome', 2).toFixed(3)} kg</span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-600 to-emerald-500 p-6 rounded-[2rem] text-white shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Total Grand Étang (2 jours)</p>
+                            <p class="text-3xl font-black">${calc.secteurTotalWeight('grand-etang').toFixed(3)} kg</p>
+                            <div class="flex gap-4 mt-2 text-xs opacity-70">
+                                <span>J1: ${calc.secteurDayWeight('grand-etang', 1).toFixed(3)} kg</span>
+                                <span>J2: ${calc.secteurDayWeight('grand-etang', 2).toFixed(3)} kg</span>
+                            </div>
                         </div>
                     </div>
                     
