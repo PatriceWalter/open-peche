@@ -3,1822 +3,1031 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OPEN 2026 - Concours de Pêche</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>OPEN 2026</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #1a5276 0%, #2e86ab 50%, #1a5276 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #0d3b4c 0%, #1a5276 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 5px;
-        }
-
-        .header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .header .dates {
-            margin-top: 10px;
-            font-size: 1rem;
-            background: rgba(255,255,255,0.15);
-            padding: 8px 20px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .nav-tab {
-            padding: 12px 25px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #1a5276;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .nav-tab:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .nav-tab.active {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .section {
-            display: none;
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            color: #1a5276;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #3498db;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title .icon {
-            font-size: 1.8rem;
-        }
-
-        /* Formulaire inscription */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2980b9, #1a5276);
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60, #219a52);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #219a52, #1e8449);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c0392b, #a93226);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            color: white;
-        }
-
-        /* Liste des participants */
-        .participants-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .participant-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            border-left: 4px solid #3498db;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .participant-card:hover {
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transform: translateX(5px);
-        }
-
-        .participant-card .name {
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-
-        .participant-card .actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .btn-icon.delete {
-            background: #ffebee;
-            color: #e74c3c;
-        }
-
-        .btn-icon.delete:hover {
-            background: #e74c3c;
-            color: white;
-        }
-
-        /* Attribution des postes */
-        .attribution-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .attribution-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .secteur-box {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            border-top: 4px solid;
-        }
-
-        .secteur-box.carpodrome {
-            border-color: #e74c3c;
-        }
-
-        .secteur-box.grand-etang {
-            border-color: #27ae60;
-        }
-
-        .secteur-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .secteur-box.carpodrome .secteur-title {
-            color: #e74c3c;
-        }
-
-        .secteur-box.grand-etang .secteur-title {
-            color: #27ae60;
-        }
-
-        .poste-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .poste-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-
-        .carpodrome .poste-number {
-            background: #e74c3c;
-        }
-
-        .grand-etang .poste-number {
-            background: #27ae60;
-        }
-
-        .poste-select {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        /* Pesées */
-        .pesee-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .pesee-table th, .pesee-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .pesee-table th {
-            background: #1a5276;
-            color: white;
-            font-weight: 500;
-        }
-
-        .pesee-table th:first-child {
-            border-radius: 8px 0 0 0;
-        }
-
-        .pesee-table th:last-child {
-            border-radius: 0 8px 0 0;
-        }
-
-        .pesee-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .pesee-table input {
-            width: 100px;
-            padding: 8px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 1rem;
-        }
-
-        .pesee-table input:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-
-        .secteur-badge {
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .secteur-badge.carpodrome {
-            background: #ffebee;
-            color: #e74c3c;
-        }
-
-        .secteur-badge.grand-etang {
-            background: #e8f5e9;
-            color: #27ae60;
-        }
-
-        /* Résultats */
-        .results-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .result-tab {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .result-tab.active {
-            background: #1a5276;
-            color: white;
-        }
-
-        .result-tab:hover:not(.active) {
-            background: #ddd;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .results-table th, .results-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .results-table th {
-            background: linear-gradient(135deg, #1a5276, #2e86ab);
-            color: white;
-        }
-
-        .results-table th:first-child {
-            border-radius: 10px 0 0 0;
-        }
-
-        .results-table th:last-child {
-            border-radius: 0 10px 0 0;
-        }
-
-        .results-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .rank {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .rank-1 {
-            background: linear-gradient(135deg, #ffd700, #ffb300);
-            color: #5d4e00;
-        }
-
-        .rank-2 {
-            background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
-            color: #404040;
-        }
-
-        .rank-3 {
-            background: linear-gradient(135deg, #cd7f32, #a0522d);
-            color: white;
-        }
-
-        .rank-other {
-            background: #f0f0f0;
-            color: #666;
-        }
-
-        .weight {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #1a5276;
-        }
-
-        /* Status indicators */
-        .status-bar {
-            display: flex;
-            justify-content: space-around;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .status-item {
-            text-align: center;
-        }
-
-        .status-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1a5276;
-        }
-
-        .status-label {
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        /* Messages */
-        .message {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .message.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .nav-tabs {
-                flex-direction: column;
-            }
-
-            .nav-tab {
-                width: 100%;
-                text-align: center;
-            }
-
-            .pesee-table {
-                font-size: 0.9rem;
-            }
-
-            .pesee-table th, .pesee-table td {
-                padding: 8px;
-            }
-
-            .status-bar {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            .nav-tabs, .btn, .admin-accordion, .header, .status-bar {
-                display: none !important;
-            }
-
-            .section {
-                display: block !important;
-                box-shadow: none;
-                page-break-after: always;
-            }
-
-            body {
-                background: white;
-            }
-        }
-
-        .day-selector {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .day-btn {
-            flex: 1;
-            padding: 15px;
-            border: 3px solid #ddd;
-            border-radius: 10px;
-            background: white;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .day-btn.active {
-            border-color: #3498db;
-            background: #e3f2fd;
-        }
-
-        .day-btn .day-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a5276;
-        }
-
-        .day-btn .day-date {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 20px;
-        }
-
-        .info-box p {
-            margin: 0;
-            color: #1565c0;
-        }
-
-        .counter {
-            display: inline-block;
-            background: #1a5276;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-
-        /* Admin Accordion */
-        .admin-accordion {
-            margin-top: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .admin-toggle {
-            width: 100%;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, #6c757d, #5a6268);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .admin-toggle:hover {
-            background: linear-gradient(135deg, #5a6268, #495057);
-        }
-
-        .toggle-icon {
-            transition: transform 0.3s;
-        }
-
-        .toggle-icon.open {
-            transform: rotate(180deg);
-        }
-
-        .admin-content {
-            display: none;
-            background: #f8f9fa;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-top: none;
-        }
-
-        .admin-content.open {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .admin-block {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
-        }
-
-        .admin-block:last-child {
-            margin-bottom: 0;
-        }
-
-        .admin-block-title {
-            color: #495057;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .admin-form .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        @media (max-width: 600px) {
-            .admin-form .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .admin-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .modal-overlay { background-color: rgba(30, 58, 138, 0.4); backdrop-filter: blur(3px); }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🎣 OPEN 2026</h1>
-        <p class="subtitle">Concours de Pêche sur 2 Jours</p>
-        <div class="dates">📅 26 - 27 Septembre 2026</div>
-    </div>
 
-    <div class="container">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-value" id="totalParticipants">0</div>
-                <div class="status-label">Participants</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="carpodromCount">0</div>
-                <div class="status-label">Carpodrome</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="grandEtangCount">0</div>
-                <div class="status-label">Grand Étang</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="peseesJ1Count">0</div>
-                <div class="status-label">Pesées J1</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="peseesJ2Count">0</div>
-                <div class="status-label">Pesées J2</div>
-            </div>
-        </div>
+    <div id="app" class="max-w-6xl mx-auto p-4 md:p-8"></div>
 
-        <!-- Navigation -->
-        <div class="nav-tabs">
-            <button class="nav-tab active" data-section="inscription">📝 Inscription</button>
-            <button class="nav-tab" data-section="attribution-j1">🎯 Attribution J1</button>
-            <button class="nav-tab" data-section="attribution-j2">🎯 Attribution J2</button>
-            <button class="nav-tab" data-section="pesees-j1">⚖️ Pesées J1</button>
-            <button class="nav-tab" data-section="pesees-j2">⚖️ Pesées J2</button>
-            <button class="nav-tab" data-section="resultats">🏆 Résultats</button>
-        </div>
-
-        <!-- Messages -->
-        <div id="message" class="message"></div>
-
-        <!-- Section Inscription -->
-        <div id="inscription" class="section active">
-            <h2 class="section-title"><span class="icon">📝</span> Inscription des Participants <span class="counter" id="inscriptionCounter">0/14</span></h2>
-            
-            <div class="form-group">
-                <label for="nomPecheur">Nom du pêcheur</label>
-                <input type="text" id="nomPecheur" placeholder="Entrez le nom du pêcheur" maxlength="50">
-            </div>
-            
-            <button class="btn btn-primary" onclick="ajouterParticipant()">
-                ➕ Ajouter le participant
-            </button>
-
-            <div id="listeParticipants" class="participants-grid"></div>
-        </div>
-
-        <!-- Section Attribution J1 -->
-        <div id="attribution-j1" class="section">
-            <h2 class="section-title"><span class="icon">🎯</span> Attribution des Postes - Jour 1 (26/09/2026)</h2>
-            
-            <div class="info-box">
-                <p>📌 Attribuez manuellement un secteur et un poste (1-7) à chaque pêcheur après le tirage au sort.</p>
-            </div>
-
-            <div id="attributionJ1Container" class="attribution-container">
-                <div class="secteur-box carpodrome">
-                    <h3 class="secteur-title">🔴 Secteur Carpodrome</h3>
-                    <div id="postesCarpodromeJ1"></div>
-                </div>
-                <div class="secteur-box grand-etang">
-                    <h3 class="secteur-title">🟢 Secteur Grand Étang</h3>
-                    <div id="postesGrandEtangJ1"></div>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-success" onclick="sauvegarderAttributionJ1()">
-                    💾 Sauvegarder l'attribution J1
-                </button>
-            </div>
-        </div>
-
-        <!-- Section Attribution J2 -->
-        <div id="attribution-j2" class="section">
-            <h2 class="section-title"><span class="icon">🎯</span> Attribution des Postes - Jour 2 (27/09/2026)</h2>
-            
-            <div class="info-box">
-                <p>📌 Les pêcheurs ont automatiquement changé de secteur. Attribuez uniquement les nouveaux postes (1-7).</p>
-            </div>
-
-            <div id="attributionJ2Container" class="attribution-container">
-                <div class="secteur-box carpodrome">
-                    <h3 class="secteur-title">🔴 Secteur Carpodrome <small>(ex Grand Étang J1)</small></h3>
-                    <div id="postesCarpodromeJ2"></div>
-                </div>
-                <div class="secteur-box grand-etang">
-                    <h3 class="secteur-title">🟢 Secteur Grand Étang <small>(ex Carpodrome J1)</small></h3>
-                    <div id="postesGrandEtangJ2"></div>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-success" onclick="sauvegarderAttributionJ2()">
-                    💾 Sauvegarder l'attribution J2
-                </button>
-            </div>
-        </div>
-
-        <!-- Section Pesées J1 -->
-        <div id="pesees-j1" class="section">
-            <h2 class="section-title"><span class="icon">⚖️</span> Pesées - Jour 1 (26/09/2026)</h2>
-            
-            <table class="pesee-table">
-                <thead>
-                    <tr>
-                        <th>Secteur</th>
-                        <th>Poste</th>
-                        <th>Pêcheur</th>
-                        <th>Poids (kg)</th>
-                    </tr>
-                </thead>
-                <tbody id="peseesJ1Body"></tbody>
-            </table>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-success" onclick="sauvegarderPeseesJ1()">
-                    💾 Sauvegarder les pesées J1
-                </button>
-            </div>
-        </div>
-
-        <!-- Section Pesées J2 -->
-        <div id="pesees-j2" class="section">
-            <h2 class="section-title"><span class="icon">⚖️</span> Pesées - Jour 2 (27/09/2026)</h2>
-            
-            <table class="pesee-table">
-                <thead>
-                    <tr>
-                        <th>Secteur</th>
-                        <th>Poste</th>
-                        <th>Pêcheur</th>
-                        <th>Poids (kg)</th>
-                    </tr>
-                </thead>
-                <tbody id="peseesJ2Body"></tbody>
-            </table>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-success" onclick="sauvegarderPeseesJ2()">
-                    💾 Sauvegarder les pesées J2
-                </button>
-            </div>
-        </div>
-
-        <!-- Section Résultats -->
-        <div id="resultats" class="section">
-            <h2 class="section-title"><span class="icon">🏆</span> Résultats</h2>
-            
-            <div class="results-tabs">
-                <button class="result-tab active" data-result="jour1">📅 Jour 1</button>
-                <button class="result-tab" data-result="jour2">📅 Jour 2</button>
-                <button class="result-tab" data-result="general">🏆 Classement Général</button>
-            </div>
-
-            <div id="resultJour1" class="result-content">
-                <h3 style="margin-bottom: 15px; color: #1a5276;">Classement Jour 1 - 26 Septembre 2026</h3>
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>Rang</th>
-                            <th>Pêcheur</th>
-                            <th>Secteur</th>
-                            <th>Poste</th>
-                            <th>Poids</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsJ1Body"></tbody>
-                </table>
-            </div>
-
-            <div id="resultJour2" class="result-content" style="display: none;">
-                <h3 style="margin-bottom: 15px; color: #1a5276;">Classement Jour 2 - 27 Septembre 2026</h3>
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>Rang</th>
-                            <th>Pêcheur</th>
-                            <th>Secteur</th>
-                            <th>Poste</th>
-                            <th>Poids</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsJ2Body"></tbody>
-                </table>
-            </div>
-
-            <div id="resultGeneral" class="result-content" style="display: none;">
-                <h3 style="margin-bottom: 15px; color: #1a5276;">🏆 Classement Général - Cumul des 2 Jours</h3>
-                <table class="results-table">
-                    <thead>
-                        <tr>
-                            <th>Rang</th>
-                            <th>Pêcheur</th>
-                            <th>Poids J1</th>
-                            <th>Poids J2</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsGeneralBody"></tbody>
-                </table>
-            </div>
-
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-primary" onclick="window.print()">
-                    🖨️ Imprimer les résultats
-                </button>
-            </div>
-        </div>
-
-        <!-- Admin Section - Accordéon -->
-        <div class="admin-accordion">
-            <button class="admin-toggle" onclick="toggleAdmin()">
-                <span>⚙️ Administration 🔒</span>
-                <span class="toggle-icon" id="adminToggleIcon">▼</span>
-            </button>
-            <div class="admin-content" id="adminContent">
-                <!-- Personnalisation -->
-                <div class="admin-block">
-                    <h4 class="admin-block-title">🎨 Personnalisation</h4>
-                    <div class="admin-form">
-                        <div class="form-group">
-                            <label for="titreEvt">Titre de l'événement</label>
-                            <input type="text" id="titreEvt" placeholder="OPEN 2026" maxlength="50">
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="dateJ1">Date Jour 1</label>
-                                <input type="date" id="dateJ1">
-                            </div>
-                            <div class="form-group">
-                                <label for="dateJ2">Date Jour 2</label>
-                                <input type="date" id="dateJ2">
-                            </div>
-                        </div>
-                        <button class="btn btn-success" onclick="sauvegarderParametres()">
-                            💾 Sauvegarder les paramètres
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Sécurité -->
-                <div class="admin-block">
-                    <h4 class="admin-block-title">🔐 Sécurité</h4>
-                    <div class="admin-form">
-                        <div class="form-group">
-                            <label for="newPassword">Nouveau mot de passe admin</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="password" id="newPassword" placeholder="Entrez le nouveau mot de passe" style="flex: 1;">
-                                <button class="btn btn-primary" onclick="changerMotDePasse()">
-                                    🔑 Modifier
-                                </button>
-                            </div>
-                            <small style="color: #666; margin-top: 5px; display: block;">Mot de passe actuel : <span id="currentPasswordHint">****</span></small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Réinitialisations -->
-                <div class="admin-block">
-                    <h4 class="admin-block-title">🔄 Réinitialisations</h4>
-                    <div class="admin-buttons">
-                        <button class="btn btn-warning" onclick="reinitialiserJ1()">🔄 Réinitialiser J1</button>
-                        <button class="btn btn-warning" onclick="reinitialiserJ2()">🔄 Réinitialiser J2</button>
-                        <button class="btn btn-danger" onclick="reinitialiserTout()">🗑️ Tout réinitialiser</button>
-                    </div>
-                </div>
+    <!-- Modal Attribution Poste -->
+    <div id="modal-poste" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm mx-4 border-t-8 border-blue-600">
+            <h3 class="text-xl font-bold mb-2 text-blue-900 uppercase italic">Assigner un poste</h3>
+            <p id="modal-fisher-name" class="text-blue-600 font-bold mb-2 text-lg"></p>
+            <p id="modal-fisher-secteur" class="text-xs text-slate-500 mb-6 uppercase"></p>
+            <select id="modal-select-poste" class="w-full border-2 border-slate-100 p-4 rounded-2xl mb-6 font-bold outline-none focus:border-blue-600 bg-slate-50 uppercase"></select>
+            <div class="flex gap-3">
+                <button onclick="closePosteModal()" class="flex-1 bg-slate-100 py-4 rounded-2xl font-bold text-slate-500">Annuler</button>
+                <button onclick="confirmPosteAssignment()" class="flex-1 bg-blue-600 py-4 rounded-2xl font-bold text-white uppercase italic">Valider</button>
             </div>
         </div>
     </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // Configuration Firebase (même projet que Concours-carpodrome)
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBKcwgVSkqAfOl0C7ywpS4sKbDPpcsrnmw",
             authDomain: "enduro-gundershoffen.firebaseapp.com",
-            databaseURL: "https://enduro-gundershoffen-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "enduro-gundershoffen",
-            storageBucket: "enduro-gundershoffen.appspot.com",
-            messagingSenderId: "957498107874",
             appId: "1:957498107874:web:f4e2d4e8c8e9e8e8e8e8e8"
         };
-
-        // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const dbRef = database.ref('open-2026');
+        const db = firebase.firestore();
 
-        // Variables globales
-        let participants = [];
-        let attributionJ1 = { carpodrome: {}, grandEtang: {} };
-        let attributionJ2 = { carpodrome: {}, grandEtang: {} };
-        let peseesJ1 = {};
-        let peseesJ2 = {};
-        let parametres = {
-            titre: 'OPEN 2026',
-            dateJ1: '2026-09-26',
-            dateJ2: '2026-09-27',
-            motDePasseAdmin: 'admin'
+        let state = {
+            isLoggedIn: sessionStorage.getItem('auth_open2026') === 'true',
+            isAdmin: false,
+            currentPage: 'index',
+            currentDay: 1,
+            currentPoste: null,
+            currentSecteur: null,
+            fishermen: [],
+            contestInfo: { 
+                title: 'OPEN 2026', 
+                dateJ1: '26 Septembre 2026',
+                dateJ2: '27 Septembre 2026'
+            }
         };
 
-        // Protection Admin
-        let adminUnlocked = false;
-        const MOT_DE_PASSE_ADMIN = 'admin'; // Mot de passe par défaut
-
-        // Toggle Admin Accordion
-        function toggleAdmin() {
-            const content = document.getElementById('adminContent');
-            const icon = document.getElementById('adminToggleIcon');
-            
-            // Si déjà ouvert, on ferme simplement
-            if (content.classList.contains('open')) {
-                content.classList.remove('open');
-                icon.classList.remove('open');
-                return;
+        // Écoute Firebase
+        db.collection("data").doc("open-2026").onSnapshot(doc => {
+            if(doc.exists) {
+                const d = doc.data();
+                state.fishermen = d.fishermen || [];
+                state.contestInfo = d.contestInfo || state.contestInfo;
+                render();
             }
-            
-            // Si pas encore déverrouillé, demander le mot de passe
-            if (!adminUnlocked) {
-                const motDePasse = prompt('🔐 Entrez le mot de passe administrateur :');
-                
-                if (motDePasse === null) {
-                    // Annulé
-                    return;
-                }
-                
-                // Vérifier le mot de passe (depuis Firebase ou par défaut)
-                const mdpCorrect = parametres.motDePasseAdmin || MOT_DE_PASSE_ADMIN;
-                
-                if (motDePasse !== mdpCorrect) {
-                    showMessage('❌ Mot de passe incorrect', 'error');
-                    return;
-                }
-                
-                adminUnlocked = true;
-                showMessage('✅ Accès administrateur accordé', 'success');
-            }
-            
-            // Ouvrir l'accordéon
-            content.classList.add('open');
-            icon.classList.add('open');
-        }
+        });
 
-        // Formater date pour affichage
-        function formatDateFR(dateStr) {
-            if (!dateStr) return '';
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            return new Date(dateStr).toLocaleDateString('fr-FR', options);
-        }
-
-        // Formater date courte
-        function formatDateShort(dateStr) {
-            if (!dateStr) return '';
-            const options = { day: '2-digit', month: '2-digit' };
-            return new Date(dateStr).toLocaleDateString('fr-FR', options);
-        }
-
-        // Mettre à jour l'affichage avec les paramètres
-        function appliquerParametres() {
-            // Titre principal
-            document.querySelector('.header h1').innerHTML = `🎣 ${parametres.titre}`;
-            
-            // Dates dans le header
-            const dateJ1Short = formatDateShort(parametres.dateJ1);
-            const dateJ2Short = formatDateShort(parametres.dateJ2);
-            const annee = parametres.dateJ1 ? new Date(parametres.dateJ1).getFullYear() : '2026';
-            document.querySelector('.header .dates').innerHTML = `📅 ${dateJ1Short} - ${dateJ2Short} ${annee}`;
-            
-            // Titres des sections
-            const dateJ1Full = formatDateFR(parametres.dateJ1);
-            const dateJ2Full = formatDateFR(parametres.dateJ2);
-            
-            document.querySelector('#attribution-j1 .section-title').innerHTML = 
-                `<span class="icon">🎯</span> Attribution des Postes - Jour 1 (${dateJ1Short})`;
-            document.querySelector('#attribution-j2 .section-title').innerHTML = 
-                `<span class="icon">🎯</span> Attribution des Postes - Jour 2 (${dateJ2Short})`;
-            document.querySelector('#pesees-j1 .section-title').innerHTML = 
-                `<span class="icon">⚖️</span> Pesées - Jour 1 (${dateJ1Short})`;
-            document.querySelector('#pesees-j2 .section-title').innerHTML = 
-                `<span class="icon">⚖️</span> Pesées - Jour 2 (${dateJ2Short})`;
-            
-            // Titres résultats
-            document.querySelector('#resultJour1 h3').textContent = `Classement Jour 1 - ${dateJ1Full}`;
-            document.querySelector('#resultJour2 h3').textContent = `Classement Jour 2 - ${dateJ2Full}`;
-            
-            // Remplir les champs du formulaire admin
-            document.getElementById('titreEvt').value = parametres.titre;
-            document.getElementById('dateJ1').value = parametres.dateJ1;
-            document.getElementById('dateJ2').value = parametres.dateJ2;
-            
-            // Afficher indice mot de passe
-            const mdp = parametres.motDePasseAdmin || MOT_DE_PASSE_ADMIN;
-            document.getElementById('currentPasswordHint').textContent = mdp.charAt(0) + '***';
-        }
-
-        // Sauvegarder les paramètres
-        function sauvegarderParametres() {
-            parametres.titre = document.getElementById('titreEvt').value.trim() || 'OPEN 2026';
-            parametres.dateJ1 = document.getElementById('dateJ1').value || '2026-09-26';
-            parametres.dateJ2 = document.getElementById('dateJ2').value || '2026-09-27';
-            
-            dbRef.child('parametres').set(parametres);
-            appliquerParametres();
-            showMessage('Paramètres sauvegardés!', 'success');
-        }
-
-        // Changer le mot de passe admin
-        function changerMotDePasse() {
-            const newPassword = document.getElementById('newPassword').value.trim();
-            
-            if (!newPassword) {
-                showMessage('Veuillez entrer un nouveau mot de passe', 'error');
-                return;
-            }
-            
-            if (newPassword.length < 4) {
-                showMessage('Le mot de passe doit contenir au moins 4 caractères', 'error');
-                return;
-            }
-            
-            if (!confirm('Confirmer le changement de mot de passe ?')) {
-                return;
-            }
-            
-            parametres.motDePasseAdmin = newPassword;
-            dbRef.child('parametres').set(parametres);
-            
-            document.getElementById('newPassword').value = '';
-            document.getElementById('currentPasswordHint').textContent = newPassword.charAt(0) + '***';
-            
-            showMessage('✅ Mot de passe modifié avec succès!', 'success');
-        }
-
-        // Navigation
-        document.querySelectorAll('.nav-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.section).classList.add('active');
+        const save = async () => {
+            await db.collection("data").doc("open-2026").set({ 
+                fishermen: state.fishermen, 
+                contestInfo: state.contestInfo 
             });
-        });
+        };
 
-        // Navigation résultats
-        document.querySelectorAll('.result-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.result-content').forEach(c => c.style.display = 'none');
-                tab.classList.add('active');
-                document.getElementById('result' + capitalizeFirst(tab.dataset.result)).style.display = 'block';
-            });
-        });
-
-        function capitalizeFirst(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-
-        // Afficher message
-        function showMessage(text, type) {
-            const msg = document.getElementById('message');
-            msg.textContent = text;
-            msg.className = 'message ' + type + ' show';
-            setTimeout(() => {
-                msg.classList.remove('show');
-            }, 3000);
-        }
-
-        // Entrée clavier pour ajout participant
-        document.getElementById('nomPecheur').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                ajouterParticipant();
+        // Authentification
+        window.login = () => {
+            const id = document.getElementById('l_id').value;
+            const mdp = document.getElementById('l_mdp').value;
+            if(id === "aappma" && mdp === "911") {
+                state.isLoggedIn = true;
+                sessionStorage.setItem('auth_open2026', 'true');
+                render();
+            } else { 
+                alert("Erreur identifiants"); 
             }
-        });
+        };
 
-        // INSCRIPTION
-        function ajouterParticipant() {
-            const nom = document.getElementById('nomPecheur').value.trim();
-            if (!nom) {
-                showMessage('Veuillez entrer un nom', 'error');
+        window.logout = () => {
+            state.isLoggedIn = false;
+            state.isAdmin = false;
+            sessionStorage.removeItem('auth_open2026');
+            render();
+        };
+
+        window.checkAdmin = () => {
+            const p = prompt("Mot de passe admin :");
+            if(p === "admin") { 
+                state.isAdmin = true; 
+                nav('settings'); 
+            } else { 
+                alert("Accès refusé");
+            }
+        };
+
+        // Calculs
+        const calc = {
+            // Poids total d'un pêcheur pour un jour donné
+            dayWeight: (f, day) => (f.weights || []).filter(w => w.day === day).reduce((s, w) => s + w.weight, 0),
+            
+            // Poids total des 2 jours
+            totalWeight: (f) => (f.weights || []).reduce((s, w) => s + w.weight, 0),
+            
+            // Nombre de poissons pour un jour
+            dayFishCount: (f, day) => (f.weights || []).filter(w => w.day === day).reduce((s, w) => s + (w.fishCount || 0), 0),
+            
+            // Nombre total de poissons
+            totalFishCount: (f) => (f.weights || []).reduce((s, w) => s + (w.fishCount || 0), 0),
+            
+            // Poids global par jour
+            globalDayWeight: (day) => state.fishermen.reduce((acc, f) => acc + calc.dayWeight(f, day), 0),
+            
+            // Poissons global par jour
+            globalDayFish: (day) => state.fishermen.reduce((acc, f) => acc + calc.dayFishCount(f, day), 0),
+            
+            // Record du jour (plus grosse prise unique)
+            dayRecord: (day) => {
+                let best = { w: 0, n: '---', p: '' };
+                state.fishermen.forEach(f => {
+                    (f.weights || []).filter(w => w.day === day).forEach(w => {
+                        if(w.fishCount === 1 && w.weight > best.w) {
+                            best = { w: w.weight, n: f.nom, p: f.prenom };
+                        }
+                    });
+                });
+                return best;
+            },
+            
+            // Record général
+            globalRecord: () => {
+                let best = { w: 0, n: '---', p: '' };
+                state.fishermen.forEach(f => {
+                    (f.weights || []).forEach(w => {
+                        if(w.fishCount === 1 && w.weight > best.w) {
+                            best = { w: w.weight, n: f.nom, p: f.prenom };
+                        }
+                    });
+                });
+                return best;
+            }
+        };
+
+        window.nav = (p) => { 
+            state.currentPage = p; 
+            render();
+        };
+
+        window.setDay = (d) => {
+            state.currentDay = d;
+            render();
+        };
+
+        // Rendu principal
+        function render() {
+            const root = document.getElementById('app');
+            
+            // Page de connexion
+            if(!state.isLoggedIn) {
+                root.innerHTML = `
+                    <div class="min-h-[60vh] flex items-center justify-center">
+                        <div class="bg-white p-10 rounded-[2.5rem] shadow-xl w-full max-w-sm mx-4 border text-center">
+                            <h2 class="text-2xl font-black mb-6 text-blue-900 uppercase italic">Connexion</h2>
+                            <input id="l_id" value="aappma" readonly class="w-full p-4 border rounded-2xl mb-4 font-bold bg-slate-200 uppercase outline-none cursor-not-allowed text-slate-600">
+                            <input id="l_mdp" type="password" placeholder="MOT DE PASSE" class="w-full p-4 border rounded-2xl mb-6 font-bold bg-slate-50 outline-none">
+                            <button onclick="login()" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase italic">Entrer</button>
+                        </div>
+                    </div>`;
                 return;
             }
-            if (participants.length >= 14) {
-                showMessage('Maximum 14 participants atteint', 'error');
-                return;
-            }
-            if (participants.some(p => p.nom.toLowerCase() === nom.toLowerCase())) {
-                showMessage('Ce participant existe déjà', 'error');
-                return;
-            }
 
-            const participant = {
-                id: Date.now().toString(),
-                nom: nom
-            };
-            participants.push(participant);
-            sauvegarderParticipants();
-            document.getElementById('nomPecheur').value = '';
-            document.getElementById('nomPecheur').focus();
-            showMessage(`${nom} ajouté avec succès`, 'success');
+            // Pages principales
+            if(state.currentPage === 'index') renderIndex(root);
+            else if(state.currentPage === 'inscription') renderInscription(root);
+            else if(state.currentPage === 'attributionJ1') renderAttributionJ1(root);
+            else if(state.currentPage === 'attributionJ2') renderAttributionJ2(root);
+            else if(state.currentPage === 'resultats') renderResultats(root);
+            else if(state.currentPage === 'poste') renderPoste(root);
+            else if(state.currentPage === 'settings') renderSettings(root);
+            
+            lucide.createIcons();
         }
 
-        function supprimerParticipant(id) {
-            if (!confirm('Supprimer ce participant ?')) return;
-            participants = participants.filter(p => p.id !== id);
-            sauvegarderParticipants();
-            showMessage('Participant supprimé', 'success');
-        }
-
-        function sauvegarderParticipants() {
-            dbRef.child('participants').set(participants);
-            afficherParticipants();
-            mettreAJourAttributions();
-            mettreAJourStatus();
-        }
-
-        function afficherParticipants() {
-            const container = document.getElementById('listeParticipants');
-            container.innerHTML = participants.map(p => `
-                <div class="participant-card">
-                    <span class="name">${p.nom}</span>
-                    <div class="actions">
-                        <button class="btn-icon delete" onclick="supprimerParticipant('${p.id}')" title="Supprimer">🗑️</button>
+        // Page d'accueil
+        function renderIndex(container) {
+            container.innerHTML = `
+                <div class="flex justify-between items-center mb-8">
+                    <button onclick="checkAdmin()" class="p-3 bg-white border rounded-full text-blue-600 shadow-sm hover:bg-blue-50 transition-colors">
+                        <i data-lucide="settings"></i>
+                    </button>
+                    <button onclick="logout()" class="p-3 bg-red-50 border border-red-100 rounded-full text-red-600 shadow-sm hover:bg-red-100 transition-colors">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+                
+                <div class="text-center mb-12">
+                    <h1 class="text-5xl font-black text-blue-900 uppercase italic tracking-tighter">${state.contestInfo.title}</h1>
+                    <div class="inline-block px-8 py-3 bg-blue-600 text-white rounded-full font-bold uppercase text-xs mt-3 shadow-lg">
+                        ${state.contestInfo.dateJ1} - ${state.contestInfo.dateJ2}
                     </div>
                 </div>
-            `).join('');
-            document.getElementById('inscriptionCounter').textContent = `${participants.length}/14`;
-        }
-
-        // ATTRIBUTION J1
-        function mettreAJourAttributions() {
-            genererAttributionJ1();
-            genererAttributionJ2();
-            genererPeseesJ1();
-            genererPeseesJ2();
-        }
-
-        function genererAttributionJ1() {
-            const carpoContainer = document.getElementById('postesCarpodromeJ1');
-            const etangContainer = document.getElementById('postesGrandEtangJ1');
-            
-            let carpoHTML = '';
-            let etangHTML = '';
-
-            for (let i = 1; i <= 7; i++) {
-                carpoHTML += `
-                    <div class="poste-row">
-                        <div class="poste-number">${i}</div>
-                        <select class="poste-select" id="carpoJ1_${i}" onchange="verifierDoublonJ1()">
-                            <option value="">-- Sélectionner --</option>
-                            ${participants.map(p => `<option value="${p.id}" ${attributionJ1.carpodrome[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-                etangHTML += `
-                    <div class="poste-row">
-                        <div class="poste-number">${i}</div>
-                        <select class="poste-select" id="etangJ1_${i}" onchange="verifierDoublonJ1()">
-                            <option value="">-- Sélectionner --</option>
-                            ${participants.map(p => `<option value="${p.id}" ${attributionJ1.grandEtang[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-            }
-
-            carpoContainer.innerHTML = carpoHTML;
-            etangContainer.innerHTML = etangHTML;
-        }
-
-        function verifierDoublonJ1() {
-            const selects = document.querySelectorAll('#attribution-j1 select');
-            const values = [];
-            selects.forEach(s => {
-                if (s.value) {
-                    if (values.includes(s.value)) {
-                        showMessage('Attention: Un pêcheur est assigné plusieurs fois!', 'error');
-                        s.style.borderColor = '#e74c3c';
-                    } else {
-                        s.style.borderColor = '#ddd';
-                    }
-                    values.push(s.value);
-                }
-            });
-        }
-
-        function sauvegarderAttributionJ1() {
-            // Récupérer les valeurs
-            const newAttribution = { carpodrome: {}, grandEtang: {} };
-            
-            for (let i = 1; i <= 7; i++) {
-                const carpoSelect = document.getElementById(`carpoJ1_${i}`);
-                const etangSelect = document.getElementById(`etangJ1_${i}`);
                 
-                if (carpoSelect && carpoSelect.value) {
-                    newAttribution.carpodrome[i] = carpoSelect.value;
-                }
-                if (etangSelect && etangSelect.value) {
-                    newAttribution.grandEtang[i] = etangSelect.value;
-                }
-            }
-
-            // Vérifier les doublons
-            const allValues = [...Object.values(newAttribution.carpodrome), ...Object.values(newAttribution.grandEtang)];
-            const uniqueValues = new Set(allValues);
-            if (allValues.length !== uniqueValues.size) {
-                showMessage('Erreur: Un pêcheur est assigné plusieurs fois!', 'error');
-                return;
-            }
-
-            attributionJ1 = newAttribution;
-            dbRef.child('attributionJ1').set(attributionJ1);
-            
-            // Générer automatiquement l'attribution J2 (inversion des secteurs)
-            genererAttributionJ2Auto();
-            
-            showMessage('Attribution J1 sauvegardée!', 'success');
-            mettreAJourStatus();
-            genererPeseesJ1();
+                <!-- Sélecteur de jour -->
+                <div class="flex justify-center gap-4 mb-8">
+                    <button onclick="setDay(1)" class="px-8 py-4 rounded-2xl font-black uppercase italic transition-all ${state.currentDay === 1 ? 'bg-blue-900 text-white shadow-xl scale-105' : 'bg-white text-blue-900 border-2 border-blue-200'}">
+                        Jour 1 - ${state.contestInfo.dateJ1}
+                    </button>
+                    <button onclick="setDay(2)" class="px-8 py-4 rounded-2xl font-black uppercase italic transition-all ${state.currentDay === 2 ? 'bg-blue-900 text-white shadow-xl scale-105' : 'bg-white text-blue-900 border-2 border-blue-200'}">
+                        Jour 2 - ${state.contestInfo.dateJ2}
+                    </button>
+                </div>
+                
+                <!-- Boutons principaux -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
+                    <button onclick="nav('inscription')" class="p-8 bg-orange-500 text-white rounded-[2.5rem] shadow-xl font-black text-2xl flex items-center justify-between hover:scale-95 transition-transform italic">
+                        Inscriptions <i data-lucide="users"></i>
+                    </button>
+                    <button onclick="nav('${state.currentDay === 1 ? 'attributionJ1' : 'attributionJ2'}')" class="p-8 bg-purple-600 text-white rounded-[2.5rem] shadow-xl font-black text-2xl flex items-center justify-between hover:scale-95 transition-transform italic">
+                        Postes J${state.currentDay} <i data-lucide="map-pin"></i>
+                    </button>
+                    <button onclick="nav('resultats')" class="p-8 bg-emerald-600 text-white rounded-[2.5rem] shadow-xl font-black text-3xl flex items-center justify-between hover:scale-95 transition-transform italic">
+                        Résultats <i data-lucide="trophy"></i>
+                    </button>
+                </div>
+                
+                <!-- Grilles des postes -->
+                <h2 class="text-2xl font-black text-red-600 mb-4 uppercase italic pl-2 flex items-center gap-2">
+                    <span class="w-4 h-4 bg-red-600 rounded-full"></span> Carpodrome - Jour ${state.currentDay}
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 mb-12">
+                    ${renderGrid(7, 'carpodrome', state.currentDay)}
+                </div>
+                
+                <h2 class="text-2xl font-black text-emerald-600 mb-4 uppercase italic pl-2 flex items-center gap-2">
+                    <span class="w-4 h-4 bg-emerald-600 rounded-full"></span> Grand Étang - Jour ${state.currentDay}
+                </h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4">
+                    ${renderGrid(7, 'grand-etang', state.currentDay)}
+                </div>
+            `;
         }
 
-        // ATTRIBUTION J2
-        function genererAttributionJ2Auto() {
-            // Les pêcheurs qui étaient au Carpodrome J1 vont au Grand Étang J2
-            // Les pêcheurs qui étaient au Grand Étang J1 vont au Carpodrome J2
+        // Grille des postes
+        function renderGrid(count, secteur, day) {
+            const secteurKey = day === 1 ? 'secteurJ1' : 'secteurJ2';
+            const posteKey = day === 1 ? 'posteJ1' : 'posteJ2';
             
-            // Récupérer les IDs des pêcheurs par secteur J1
-            const pecheursCarpoJ1 = Object.values(attributionJ1.carpodrome);
-            const pecheursEtangJ1 = Object.values(attributionJ1.grandEtang);
-            
-            // J2: les pêcheurs du Carpodrome J1 vont au Grand Étang J2 (sans poste attribué)
-            // J2: les pêcheurs du Grand Étang J1 vont au Carpodrome J2 (sans poste attribué)
-            
-            attributionJ2 = {
-                carpodrome: {}, // Sera rempli avec les pêcheurs ex-Grand Étang J1
-                grandEtang: {}, // Sera rempli avec les pêcheurs ex-Carpodrome J1
-                pecheursCarpoJ2: pecheursEtangJ1, // Liste des IDs pour Carpodrome J2
-                pecheursEtangJ2: pecheursCarpoJ1  // Liste des IDs pour Grand Étang J2
-            };
-
-            dbRef.child('attributionJ2').set(attributionJ2);
-            genererAttributionJ2();
+            return Array.from({length: count}, (_, i) => i + 1).map(n => {
+                const f = state.fishermen.find(x => x[posteKey] == n && x[secteurKey] === secteur);
+                const bgColor = secteur === 'carpodrome' ? 'bg-red-700 border-red-700' : 'bg-emerald-700 border-emerald-700';
+                
+                return `
+                    <button onclick="${f ? `window.openP(${n}, '${secteur}', ${day})` : ''}" 
+                        class="p-5 rounded-3xl border-2 transition-all flex flex-col items-center ${f ? bgColor + ' text-white shadow-xl' : 'bg-white border-white text-slate-400 opacity-80'}">
+                        <span class="text-[10px] font-black uppercase opacity-50">Poste</span>
+                        <span class="text-3xl font-black mb-1 italic">${n}</span>
+                        <span class="text-[9px] font-bold uppercase truncate w-full text-center leading-tight">
+                            ${f ? `${f.nom}<br><span class="opacity-60 text-[8px] italic">${f.prenom}</span>` : 'LIBRE'}
+                        </span>
+                    </button>`;
+            }).join('');
         }
 
-        function genererAttributionJ2() {
-            const carpoContainer = document.getElementById('postesCarpodromeJ2');
-            const etangContainer = document.getElementById('postesGrandEtangJ2');
-            
-            // Pêcheurs disponibles pour chaque secteur J2
-            const pecheursCarpoJ2 = attributionJ2.pecheursCarpoJ2 || Object.values(attributionJ1.grandEtang);
-            const pecheursEtangJ2 = attributionJ2.pecheursEtangJ2 || Object.values(attributionJ1.carpodrome);
+        window.openP = (n, secteur, day) => { 
+            state.currentPoste = n;
+            state.currentSecteur = secteur;
+            state.currentDay = day;
+            nav('poste'); 
+        };
 
-            let carpoHTML = '';
-            let etangHTML = '';
-
-            for (let i = 1; i <= 7; i++) {
-                const participantsCarpo = participants.filter(p => pecheursCarpoJ2.includes(p.id));
-                const participantsEtang = participants.filter(p => pecheursEtangJ2.includes(p.id));
-
-                carpoHTML += `
-                    <div class="poste-row">
-                        <div class="poste-number">${i}</div>
-                        <select class="poste-select" id="carpoJ2_${i}" onchange="verifierDoublonJ2()">
-                            <option value="">-- Sélectionner --</option>
-                            ${participantsCarpo.map(p => `<option value="${p.id}" ${attributionJ2.carpodrome[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-                etangHTML += `
-                    <div class="poste-row">
-                        <div class="poste-number">${i}</div>
-                        <select class="poste-select" id="etangJ2_${i}" onchange="verifierDoublonJ2()">
-                            <option value="">-- Sélectionner --</option>
-                            ${participantsEtang.map(p => `<option value="${p.id}" ${attributionJ2.grandEtang[i] === p.id ? 'selected' : ''}>${p.nom}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-            }
-
-            carpoContainer.innerHTML = carpoHTML || '<p style="color: #999;">Veuillez d\'abord compléter l\'attribution J1</p>';
-            etangContainer.innerHTML = etangHTML || '<p style="color: #999;">Veuillez d\'abord compléter l\'attribution J1</p>';
-        }
-
-        function verifierDoublonJ2() {
-            const selects = document.querySelectorAll('#attribution-j2 select');
-            const valuesCarpodrome = [];
-            const valuesEtang = [];
-            
-            selects.forEach(s => {
-                if (s.value) {
-                    const isCarpodrome = s.id.startsWith('carpoJ2');
-                    const values = isCarpodrome ? valuesCarpodrome : valuesEtang;
+        // Page Inscription
+        function renderInscription(container) {
+            container.innerHTML = `
+                <button onclick="nav('index')" class="mb-8 flex items-center text-blue-600 font-bold underline italic">
+                    <i data-lucide="arrow-left" class="mr-2"></i> Retour Accueil
+                </button>
+                
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border mb-10">
+                    <h2 class="text-2xl font-black text-blue-900 uppercase mb-6 italic">Inscription des Pêcheurs</h2>
+                    <p class="text-slate-500 mb-6 text-sm">Inscrivez les 14 pêcheurs. L'attribution des postes se fera ensuite via le tirage au sort.</p>
                     
-                    if (values.includes(s.value)) {
-                        showMessage('Attention: Un pêcheur est assigné plusieurs fois dans ce secteur!', 'error');
-                        s.style.borderColor = '#e74c3c';
-                    } else {
-                        s.style.borderColor = '#ddd';
-                    }
-                    values.push(s.value);
-                }
-            });
-        }
-
-        function sauvegarderAttributionJ2() {
-            for (let i = 1; i <= 7; i++) {
-                const carpoSelect = document.getElementById(`carpoJ2_${i}`);
-                const etangSelect = document.getElementById(`etangJ2_${i}`);
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <input id="in_nom" placeholder="NOM" class="p-4 border-2 border-slate-100 rounded-2xl font-bold uppercase bg-slate-50 outline-none focus:border-blue-600">
+                        <input id="in_prenom" placeholder="Prénom" class="p-4 border-2 border-slate-100 rounded-2xl font-bold bg-slate-50 outline-none focus:border-blue-600">
+                        <button onclick="addF()" class="bg-blue-900 text-white font-black py-4 rounded-2xl shadow-xl uppercase italic">
+                            Inscrire
+                        </button>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-2xl text-center">
+                        <span class="text-3xl font-black text-blue-900">${state.fishermen.length}</span>
+                        <span class="text-blue-600 font-bold"> / 14 inscrits</span>
+                    </div>
+                </div>
                 
-                if (carpoSelect && carpoSelect.value) {
-                    attributionJ2.carpodrome[i] = carpoSelect.value;
-                }
-                if (etangSelect && etangSelect.value) {
-                    attributionJ2.grandEtang[i] = etangSelect.value;
-                }
-            }
-
-            dbRef.child('attributionJ2').set(attributionJ2);
-            showMessage('Attribution J2 sauvegardée!', 'success');
-            mettreAJourStatus();
-            genererPeseesJ2();
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border">
+                    <h3 class="font-black text-blue-900 uppercase mb-6 text-lg italic">Liste des Participants</h3>
+                    <div class="space-y-3">
+                        ${state.fishermen.map((f, idx) => `
+                            <div class="bg-slate-50 p-5 rounded-2xl flex justify-between items-center">
+                                <div>
+                                    <span class="font-black text-blue-900 uppercase text-lg italic">${f.nom} ${f.prenom}</span>
+                                    <div class="text-xs text-slate-400 mt-1">
+                                        ${f.posteJ1 ? `<span class="bg-red-100 text-red-600 px-2 py-1 rounded mr-2">J1: ${f.secteurJ1 === 'carpodrome' ? 'Carpo' : 'Étang'} P${f.posteJ1}</span>` : ''}
+                                        ${f.posteJ2 ? `<span class="bg-emerald-100 text-emerald-600 px-2 py-1 rounded">J2: ${f.secteurJ2 === 'carpodrome' ? 'Carpo' : 'Étang'} P${f.posteJ2}</span>` : ''}
+                                    </div>
+                                </div>
+                                <button onclick="delF(${idx})" class="text-red-300 hover:text-red-500 transition-colors">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
         }
 
-        // PESEES J1
-        function genererPeseesJ1() {
-            const tbody = document.getElementById('peseesJ1Body');
-            let html = '';
-
-            // Carpodrome
-            for (let i = 1; i <= 7; i++) {
-                const pecheurId = attributionJ1.carpodrome[i];
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    html += `
-                        <tr>
-                            <td><span class="secteur-badge carpodrome">Carpodrome</span></td>
-                            <td>${i}</td>
-                            <td>${pecheur.nom}</td>
-                            <td>
-                                <input type="number" step="0.01" min="0" id="peseeJ1_${pecheurId}" 
-                                    value="${peseesJ1[pecheurId] || ''}" 
-                                    placeholder="0.00">
-                            </td>
-                        </tr>
-                    `;
-                }
-            }
-
-            // Grand Étang
-            for (let i = 1; i <= 7; i++) {
-                const pecheurId = attributionJ1.grandEtang[i];
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    html += `
-                        <tr>
-                            <td><span class="secteur-badge grand-etang">Grand Étang</span></td>
-                            <td>${i}</td>
-                            <td>${pecheur.nom}</td>
-                            <td>
-                                <input type="number" step="0.01" min="0" id="peseeJ1_${pecheurId}" 
-                                    value="${peseesJ1[pecheurId] || ''}" 
-                                    placeholder="0.00">
-                            </td>
-                        </tr>
-                    `;
-                }
-            }
-
-            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Veuillez d\'abord attribuer les postes J1</td></tr>';
-        }
-
-        function sauvegarderPeseesJ1() {
-            const inputs = document.querySelectorAll('[id^="peseeJ1_"]');
-            peseesJ1 = {};
+        window.addF = () => {
+            const nom = document.getElementById('in_nom').value.toUpperCase().trim();
+            const prenom = document.getElementById('in_prenom').value.trim();
+            if(!nom || !prenom) return alert("Veuillez remplir le nom et prénom");
+            if(state.fishermen.length >= 14) return alert("Maximum 14 participants atteint");
+            if(state.fishermen.find(f => f.nom === nom && f.prenom === prenom)) return alert("Ce pêcheur existe déjà");
             
-            inputs.forEach(input => {
-                const pecheurId = input.id.replace('peseeJ1_', '');
-                const poids = parseFloat(input.value) || 0;
-                if (poids > 0) {
-                    peseesJ1[pecheurId] = poids;
-                }
+            state.fishermen.push({ 
+                nom, 
+                prenom, 
+                secteurJ1: null, 
+                posteJ1: null,
+                secteurJ2: null,
+                posteJ2: null,
+                weights: [] 
             });
+            save();
+            document.getElementById('in_nom').value = '';
+            document.getElementById('in_prenom').value = '';
+        };
 
-            dbRef.child('peseesJ1').set(peseesJ1);
-            showMessage('Pesées J1 sauvegardées!', 'success');
-            mettreAJourStatus();
-            afficherResultats();
-        }
+        window.delF = (idx) => { 
+            if(confirm("Supprimer ce pêcheur ?")) { 
+                state.fishermen.splice(idx, 1);
+                save(); 
+            } 
+        };
 
-        // PESEES J2
-        function genererPeseesJ2() {
-            const tbody = document.getElementById('peseesJ2Body');
-            let html = '';
-
-            // Carpodrome J2
-            for (let i = 1; i <= 7; i++) {
-                const pecheurId = attributionJ2.carpodrome[i];
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    html += `
-                        <tr>
-                            <td><span class="secteur-badge carpodrome">Carpodrome</span></td>
-                            <td>${i}</td>
-                            <td>${pecheur.nom}</td>
-                            <td>
-                                <input type="number" step="0.01" min="0" id="peseeJ2_${pecheurId}" 
-                                    value="${peseesJ2[pecheurId] || ''}" 
-                                    placeholder="0.00">
-                            </td>
-                        </tr>
-                    `;
-                }
-            }
-
-            // Grand Étang J2
-            for (let i = 1; i <= 7; i++) {
-                const pecheurId = attributionJ2.grandEtang[i];
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    html += `
-                        <tr>
-                            <td><span class="secteur-badge grand-etang">Grand Étang</span></td>
-                            <td>${i}</td>
-                            <td>${pecheur.nom}</td>
-                            <td>
-                                <input type="number" step="0.01" min="0" id="peseeJ2_${pecheurId}" 
-                                    value="${peseesJ2[pecheurId] || ''}" 
-                                    placeholder="0.00">
-                            </td>
-                        </tr>
-                    `;
-                }
-            }
-
-            tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; color: #999;">Veuillez d\'abord attribuer les postes J2</td></tr>';
-        }
-
-        function sauvegarderPeseesJ2() {
-            const inputs = document.querySelectorAll('[id^="peseeJ2_"]');
-            peseesJ2 = {};
+        // Attribution J1
+        function renderAttributionJ1(container) {
+            const carpoAssigned = state.fishermen.filter(f => f.secteurJ1 === 'carpodrome' && f.posteJ1);
+            const etangAssigned = state.fishermen.filter(f => f.secteurJ1 === 'grand-etang' && f.posteJ1);
+            const waiting = state.fishermen.filter(f => !f.posteJ1);
             
-            inputs.forEach(input => {
-                const pecheurId = input.id.replace('peseeJ2_', '');
-                const poids = parseFloat(input.value) || 0;
-                if (poids > 0) {
-                    peseesJ2[pecheurId] = poids;
-                }
-            });
-
-            dbRef.child('peseesJ2').set(peseesJ2);
-            showMessage('Pesées J2 sauvegardées!', 'success');
-            mettreAJourStatus();
-            afficherResultats();
-        }
-
-        // RESULTATS
-        function afficherResultats() {
-            afficherResultatsJ1();
-            afficherResultatsJ2();
-            afficherResultatsGeneral();
-        }
-
-        function afficherResultatsJ1() {
-            const tbody = document.getElementById('resultsJ1Body');
-            
-            // Créer liste avec tous les pêcheurs et leurs infos J1
-            const resultats = [];
-            
-            // Carpodrome
-            Object.entries(attributionJ1.carpodrome).forEach(([poste, pecheurId]) => {
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    resultats.push({
-                        nom: pecheur.nom,
-                        secteur: 'Carpodrome',
-                        poste: poste,
-                        poids: peseesJ1[pecheurId] || 0
-                    });
-                }
-            });
-            
-            // Grand Étang
-            Object.entries(attributionJ1.grandEtang).forEach(([poste, pecheurId]) => {
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    resultats.push({
-                        nom: pecheur.nom,
-                        secteur: 'Grand Étang',
-                        poste: poste,
-                        poids: peseesJ1[pecheurId] || 0
-                    });
-                }
-            });
-
-            // Trier par poids décroissant
-            resultats.sort((a, b) => b.poids - a.poids);
-
-            tbody.innerHTML = resultats.map((r, index) => `
-                <tr>
-                    <td><div class="rank ${getRankClass(index + 1)}">${index + 1}</div></td>
-                    <td>${r.nom}</td>
-                    <td><span class="secteur-badge ${r.secteur === 'Carpodrome' ? 'carpodrome' : 'grand-etang'}">${r.secteur}</span></td>
-                    <td>${r.poste}</td>
-                    <td class="weight">${r.poids.toFixed(2)} kg</td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" style="text-align: center;">Aucune pesée enregistrée</td></tr>';
-        }
-
-        function afficherResultatsJ2() {
-            const tbody = document.getElementById('resultsJ2Body');
-            
-            const resultats = [];
-            
-            // Carpodrome J2
-            Object.entries(attributionJ2.carpodrome).forEach(([poste, pecheurId]) => {
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    resultats.push({
-                        nom: pecheur.nom,
-                        secteur: 'Carpodrome',
-                        poste: poste,
-                        poids: peseesJ2[pecheurId] || 0
-                    });
-                }
-            });
-            
-            // Grand Étang J2
-            Object.entries(attributionJ2.grandEtang).forEach(([poste, pecheurId]) => {
-                const pecheur = participants.find(p => p.id === pecheurId);
-                if (pecheur) {
-                    resultats.push({
-                        nom: pecheur.nom,
-                        secteur: 'Grand Étang',
-                        poste: poste,
-                        poids: peseesJ2[pecheurId] || 0
-                    });
-                }
-            });
-
-            resultats.sort((a, b) => b.poids - a.poids);
-
-            tbody.innerHTML = resultats.map((r, index) => `
-                <tr>
-                    <td><div class="rank ${getRankClass(index + 1)}">${index + 1}</div></td>
-                    <td>${r.nom}</td>
-                    <td><span class="secteur-badge ${r.secteur === 'Carpodrome' ? 'carpodrome' : 'grand-etang'}">${r.secteur}</span></td>
-                    <td>${r.poste}</td>
-                    <td class="weight">${r.poids.toFixed(2)} kg</td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" style="text-align: center;">Aucune pesée enregistrée</td></tr>';
-        }
-
-        function afficherResultatsGeneral() {
-            const tbody = document.getElementById('resultsGeneralBody');
-            
-            // Cumul des poids J1 + J2 par pêcheur
-            const resultats = participants.map(p => {
-                const poidsJ1 = peseesJ1[p.id] || 0;
-                const poidsJ2 = peseesJ2[p.id] || 0;
-                return {
-                    nom: p.nom,
-                    poidsJ1: poidsJ1,
-                    poidsJ2: poidsJ2,
-                    total: poidsJ1 + poidsJ2
-                };
-            });
-
-            // Trier par total décroissant
-            resultats.sort((a, b) => b.total - a.total);
-
-            tbody.innerHTML = resultats.map((r, index) => `
-                <tr>
-                    <td><div class="rank ${getRankClass(index + 1)}">${index + 1}</div></td>
-                    <td>${r.nom}</td>
-                    <td>${r.poidsJ1.toFixed(2)} kg</td>
-                    <td>${r.poidsJ2.toFixed(2)} kg</td>
-                    <td class="weight">${r.total.toFixed(2)} kg</td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" style="text-align: center;">Aucun participant</td></tr>';
-        }
-
-        function getRankClass(rank) {
-            if (rank === 1) return 'rank-1';
-            if (rank === 2) return 'rank-2';
-            if (rank === 3) return 'rank-3';
-            return 'rank-other';
-        }
-
-        // STATUS
-        function mettreAJourStatus() {
-            document.getElementById('totalParticipants').textContent = participants.length;
-            document.getElementById('carpodromCount').textContent = Object.keys(attributionJ1.carpodrome).length;
-            document.getElementById('grandEtangCount').textContent = Object.keys(attributionJ1.grandEtang).length;
-            document.getElementById('peseesJ1Count').textContent = Object.keys(peseesJ1).length;
-            document.getElementById('peseesJ2Count').textContent = Object.keys(peseesJ2).length;
-        }
-
-        // ADMIN - Réinitialisations
-        function reinitialiserJ1() {
-            if (!confirm('Réinitialiser l\'attribution et les pesées du Jour 1 ?')) return;
-            attributionJ1 = { carpodrome: {}, grandEtang: {} };
-            peseesJ1 = {};
-            dbRef.child('attributionJ1').set(attributionJ1);
-            dbRef.child('peseesJ1').set(peseesJ1);
-            mettreAJourAttributions();
-            mettreAJourStatus();
-            afficherResultats();
-            showMessage('Jour 1 réinitialisé', 'success');
-        }
-
-        function reinitialiserJ2() {
-            if (!confirm('Réinitialiser l\'attribution et les pesées du Jour 2 ?')) return;
-            attributionJ2 = { carpodrome: {}, grandEtang: {} };
-            peseesJ2 = {};
-            dbRef.child('attributionJ2').set(attributionJ2);
-            dbRef.child('peseesJ2').set(peseesJ2);
-            genererAttributionJ2Auto();
-            mettreAJourStatus();
-            afficherResultats();
-            showMessage('Jour 2 réinitialisé', 'success');
-        }
-
-        function reinitialiserTout() {
-            if (!confirm('ATTENTION: Supprimer TOUTES les données du concours ?')) return;
-            if (!confirm('Êtes-vous vraiment sûr ?')) return;
-            
-            participants = [];
-            attributionJ1 = { carpodrome: {}, grandEtang: {} };
-            attributionJ2 = { carpodrome: {}, grandEtang: {} };
-            peseesJ1 = {};
-            peseesJ2 = {};
-            
-            dbRef.set(null);
-            
-            afficherParticipants();
-            mettreAJourAttributions();
-            mettreAJourStatus();
-            afficherResultats();
-            showMessage('Toutes les données ont été supprimées', 'success');
-        }
-
-        // CHARGEMENT INITIAL
-        function chargerDonnees() {
-            dbRef.on('value', (snapshot) => {
-                const data = snapshot.val() || {};
+            container.innerHTML = `
+                <button onclick="nav('index')" class="mb-8 flex items-center text-blue-600 font-bold underline italic">
+                    <i data-lucide="arrow-left" class="mr-2"></i> Retour Accueil
+                </button>
                 
-                participants = data.participants || [];
-                attributionJ1 = data.attributionJ1 || { carpodrome: {}, grandEtang: {} };
-                attributionJ2 = data.attributionJ2 || { carpodrome: {}, grandEtang: {} };
-                peseesJ1 = data.peseesJ1 || {};
-                peseesJ2 = data.peseesJ2 || {};
-                parametres = data.parametres || {
-                    titre: 'OPEN 2026',
-                    dateJ1: '2026-09-26',
-                    dateJ2: '2026-09-27',
-                    motDePasseAdmin: 'admin'
-                };
-
-                appliquerParametres();
-                afficherParticipants();
-                mettreAJourAttributions();
-                mettreAJourStatus();
-                afficherResultats();
-            });
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border mb-8">
+                    <h2 class="text-2xl font-black text-blue-900 uppercase mb-2 italic">Attribution Jour 1</h2>
+                    <p class="text-slate-500 text-sm">${state.contestInfo.dateJ1} - Après le tirage au sort, assignez chaque pêcheur à son secteur et poste.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Carpodrome -->
+                    <div>
+                        <h3 class="font-black text-red-600 uppercase mb-4 bg-red-50 p-4 rounded-xl text-xs italic tracking-widest flex items-center gap-2">
+                            <span class="w-3 h-3 bg-red-600 rounded-full"></span> Carpodrome (${carpoAssigned.length}/7)
+                        </h3>
+                        <div class="space-y-3">
+                            ${carpoAssigned.sort((a,b) => a.posteJ1 - b.posteJ1).map(f => `
+                                <div class="bg-white p-5 rounded-3xl border flex justify-between items-center shadow-sm">
+                                    <div>
+                                        <div class="text-red-600 font-black text-xs uppercase italic leading-none">Poste ${f.posteJ1}</div>
+                                        <div class="font-black text-blue-900 uppercase text-lg italic">${f.nom} ${f.prenom}</div>
+                                    </div>
+                                    <button onclick="removePosteJ1('${f.nom}', '${f.prenom}')" class="text-red-200 hover:text-red-500 transition-colors">
+                                        <i data-lucide="x-circle"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Grand Étang -->
+                    <div>
+                        <h3 class="font-black text-emerald-600 uppercase mb-4 bg-emerald-50 p-4 rounded-xl text-xs italic tracking-widest flex items-center gap-2">
+                            <span class="w-3 h-3 bg-emerald-600 rounded-full"></span> Grand Étang (${etangAssigned.length}/7)
+                        </h3>
+                        <div class="space-y-3">
+                            ${etangAssigned.sort((a,b) => a.posteJ1 - b.posteJ1).map(f => `
+                                <div class="bg-white p-5 rounded-3xl border flex justify-between items-center shadow-sm">
+                                    <div>
+                                        <div class="text-emerald-600 font-black text-xs uppercase italic leading-none">Poste ${f.posteJ1}</div>
+                                        <div class="font-black text-blue-900 uppercase text-lg italic">${f.nom} ${f.prenom}</div>
+                                    </div>
+                                    <button onclick="removePosteJ1('${f.nom}', '${f.prenom}')" class="text-red-200 hover:text-red-500 transition-colors">
+                                        <i data-lucide="x-circle"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- En attente -->
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border">
+                    <h3 class="font-black text-slate-600 uppercase mb-4 text-sm italic">En attente d'attribution (${waiting.length})</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        ${waiting.map(f => `
+                            <div class="bg-slate-50 p-4 rounded-2xl border-2 border-dashed border-slate-200 flex justify-between items-center">
+                                <div class="font-black text-blue-900 uppercase text-sm italic">${f.nom} ${f.prenom}</div>
+                                <div class="flex gap-2">
+                                    <button onclick="openModalJ1('${f.nom}', '${f.prenom}', 'carpodrome')" class="bg-red-600 text-white px-3 py-2 rounded-xl font-black text-[10px] uppercase italic">
+                                        Carpo
+                                    </button>
+                                    <button onclick="openModalJ1('${f.nom}', '${f.prenom}', 'grand-etang')" class="bg-emerald-600 text-white px-3 py-2 rounded-xl font-black text-[10px] uppercase italic">
+                                        Étang
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
         }
+
+        window.openModalJ1 = (nom, prenom, secteur) => {
+            state.targetFisher = { nom, prenom };
+            state.targetSecteur = secteur;
+            state.targetDay = 1;
+            
+            document.getElementById('modal-fisher-name').innerText = `${nom} ${prenom}`;
+            document.getElementById('modal-fisher-secteur').innerText = `Secteur: ${secteur === 'carpodrome' ? 'Carpodrome' : 'Grand Étang'}`;
+            
+            const sel = document.getElementById('modal-select-poste');
+            sel.innerHTML = '<option value="">Choisir un poste...</option>';
+            
+            for(let i = 1; i <= 7; i++) {
+                if(!state.fishermen.find(f => f.posteJ1 == i && f.secteurJ1 === secteur)) {
+                    sel.innerHTML += `<option value="${i}">Poste ${i}</option>`;
+                }
+            }
+            
+            document.getElementById('modal-poste').classList.remove('hidden');
+        };
+
+        window.removePosteJ1 = (nom, prenom) => {
+            const f = state.fishermen.find(f => f.nom === nom && f.prenom === prenom);
+            if(f) {
+                f.secteurJ1 = null;
+                f.posteJ1 = null;
+                // Supprimer aussi J2 car il dépend de J1
+                f.secteurJ2 = null;
+                f.posteJ2 = null;
+                save();
+            }
+        };
+
+        // Attribution J2
+        function renderAttributionJ2(container) {
+            // J2: inversion automatique des secteurs
+            const carpoJ2 = state.fishermen.filter(f => f.secteurJ1 === 'grand-etang'); // Ex Grand Étang → Carpodrome
+            const etangJ2 = state.fishermen.filter(f => f.secteurJ1 === 'carpodrome'); // Ex Carpodrome → Grand Étang
+            
+            const carpoAssigned = carpoJ2.filter(f => f.posteJ2);
+            const etangAssigned = etangJ2.filter(f => f.posteJ2);
+            const carpoWaiting = carpoJ2.filter(f => !f.posteJ2);
+            const etangWaiting = etangJ2.filter(f => !f.posteJ2);
+            
+            container.innerHTML = `
+                <button onclick="nav('index')" class="mb-8 flex items-center text-blue-600 font-bold underline italic">
+                    <i data-lucide="arrow-left" class="mr-2"></i> Retour Accueil
+                </button>
+                
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border mb-8">
+                    <h2 class="text-2xl font-black text-blue-900 uppercase mb-2 italic">Attribution Jour 2</h2>
+                    <p class="text-slate-500 text-sm">${state.contestInfo.dateJ2} - Les secteurs sont inversés. Attribuez uniquement les postes.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Carpodrome J2 (ex Grand Étang J1) -->
+                    <div>
+                        <h3 class="font-black text-red-600 uppercase mb-4 bg-red-50 p-4 rounded-xl text-xs italic tracking-widest">
+                            <span class="w-3 h-3 bg-red-600 rounded-full inline-block mr-2"></span> 
+                            Carpodrome J2 <span class="text-red-300 font-normal">(ex Grand Étang J1)</span>
+                        </h3>
+                        
+                        <div class="space-y-3 mb-6">
+                            ${carpoAssigned.sort((a,b) => a.posteJ2 - b.posteJ2).map(f => `
+                                <div class="bg-white p-5 rounded-3xl border flex justify-between items-center shadow-sm">
+                                    <div>
+                                        <div class="text-red-600 font-black text-xs uppercase italic leading-none">Poste ${f.posteJ2}</div>
+                                        <div class="font-black text-blue-900 uppercase text-lg italic">${f.nom} ${f.prenom}</div>
+                                    </div>
+                                    <button onclick="removePosteJ2('${f.nom}', '${f.prenom}')" class="text-red-200 hover:text-red-500 transition-colors">
+                                        <i data-lucide="x-circle"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- En attente Carpodrome J2 -->
+                        ${carpoWaiting.length > 0 ? `
+                            <div class="bg-red-50/50 p-4 rounded-2xl border border-dashed border-red-200">
+                                <p class="text-xs text-red-400 font-bold mb-3 uppercase">En attente (${carpoWaiting.length})</p>
+                                <div class="space-y-2">
+                                    ${carpoWaiting.map(f => `
+                                        <div class="bg-white p-3 rounded-xl flex justify-between items-center">
+                                            <span class="font-bold text-blue-900 text-sm uppercase italic">${f.nom} ${f.prenom}</span>
+                                            <button onclick="openModalJ2('${f.nom}', '${f.prenom}', 'carpodrome')" class="bg-red-600 text-white px-3 py-1 rounded-lg font-black text-[10px] uppercase">
+                                                Assigner
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Grand Étang J2 (ex Carpodrome J1) -->
+                    <div>
+                        <h3 class="font-black text-emerald-600 uppercase mb-4 bg-emerald-50 p-4 rounded-xl text-xs italic tracking-widest">
+                            <span class="w-3 h-3 bg-emerald-600 rounded-full inline-block mr-2"></span> 
+                            Grand Étang J2 <span class="text-emerald-300 font-normal">(ex Carpodrome J1)</span>
+                        </h3>
+                        
+                        <div class="space-y-3 mb-6">
+                            ${etangAssigned.sort((a,b) => a.posteJ2 - b.posteJ2).map(f => `
+                                <div class="bg-white p-5 rounded-3xl border flex justify-between items-center shadow-sm">
+                                    <div>
+                                        <div class="text-emerald-600 font-black text-xs uppercase italic leading-none">Poste ${f.posteJ2}</div>
+                                        <div class="font-black text-blue-900 uppercase text-lg italic">${f.nom} ${f.prenom}</div>
+                                    </div>
+                                    <button onclick="removePosteJ2('${f.nom}', '${f.prenom}')" class="text-red-200 hover:text-red-500 transition-colors">
+                                        <i data-lucide="x-circle"></i>
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- En attente Grand Étang J2 -->
+                        ${etangWaiting.length > 0 ? `
+                            <div class="bg-emerald-50/50 p-4 rounded-2xl border border-dashed border-emerald-200">
+                                <p class="text-xs text-emerald-400 font-bold mb-3 uppercase">En attente (${etangWaiting.length})</p>
+                                <div class="space-y-2">
+                                    ${etangWaiting.map(f => `
+                                        <div class="bg-white p-3 rounded-xl flex justify-between items-center">
+                                            <span class="font-bold text-blue-900 text-sm uppercase italic">${f.nom} ${f.prenom}</span>
+                                            <button onclick="openModalJ2('${f.nom}', '${f.prenom}', 'grand-etang')" class="bg-emerald-600 text-white px-3 py-1 rounded-lg font-black text-[10px] uppercase">
+                                                Assigner
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.openModalJ2 = (nom, prenom, secteur) => {
+            state.targetFisher = { nom, prenom };
+            state.targetSecteur = secteur;
+            state.targetDay = 2;
+            
+            document.getElementById('modal-fisher-name').innerText = `${nom} ${prenom}`;
+            document.getElementById('modal-fisher-secteur').innerText = `Secteur J2: ${secteur === 'carpodrome' ? 'Carpodrome' : 'Grand Étang'}`;
+            
+            const sel = document.getElementById('modal-select-poste');
+            sel.innerHTML = '<option value="">Choisir un poste...</option>';
+            
+            for(let i = 1; i <= 7; i++) {
+                if(!state.fishermen.find(f => f.posteJ2 == i && f.secteurJ2 === secteur)) {
+                    sel.innerHTML += `<option value="${i}">Poste ${i}</option>`;
+                }
+            }
+            
+            document.getElementById('modal-poste').classList.remove('hidden');
+        };
+
+        window.removePosteJ2 = (nom, prenom) => {
+            const f = state.fishermen.find(f => f.nom === nom && f.prenom === prenom);
+            if(f) {
+                f.posteJ2 = null;
+                save();
+            }
+        };
+
+        // Confirmation attribution poste
+        window.confirmPosteAssignment = () => {
+            const poste = parseInt(document.getElementById('modal-select-poste').value);
+            if(!poste) return;
+            
+            const f = state.fishermen.find(f => f.nom === state.targetFisher.nom && f.prenom === state.targetFisher.prenom);
+            if(!f) return;
+            
+            if(state.targetDay === 1) {
+                f.secteurJ1 = state.targetSecteur;
+                f.posteJ1 = poste;
+                // Pré-définir le secteur J2 (inversé)
+                f.secteurJ2 = state.targetSecteur === 'carpodrome' ? 'grand-etang' : 'carpodrome';
+            } else {
+                f.secteurJ2 = state.targetSecteur;
+                f.posteJ2 = poste;
+            }
+            
+            save();
+            closePosteModal();
+        };
+
+        window.closePosteModal = () => {
+            document.getElementById('modal-poste').classList.add('hidden');
+        };
+
+        // Page Poste (Pesées)
+        function renderPoste(container) {
+            const posteKey = state.currentDay === 1 ? 'posteJ1' : 'posteJ2';
+            const secteurKey = state.currentDay === 1 ? 'secteurJ1' : 'secteurJ2';
+            
+            const f = state.fishermen.find(f => f[posteKey] == state.currentPoste && f[secteurKey] === state.currentSecteur);
+            if(!f) return nav('index');
+            
+            const dayWeights = (f.weights || []).filter(w => w.day === state.currentDay);
+            const dayTotal = calc.dayWeight(f, state.currentDay);
+            
+            const secteurColor = state.currentSecteur === 'carpodrome' ? 'red' : 'emerald';
+            const secteurName = state.currentSecteur === 'carpodrome' ? 'Carpodrome' : 'Grand Étang';
+            
+            container.innerHTML = `
+                <button onclick="nav('index')" class="mb-8 flex items-center text-blue-600 font-bold underline italic">
+                    <i data-lucide="arrow-left" class="mr-2"></i> Retour
+                </button>
+                
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-l-8 border-${secteurColor}-600 mb-6 flex justify-between items-end">
+                    <div>
+                        <div class="text-xs font-bold text-${secteurColor}-600 uppercase mb-1">${secteurName} - Jour ${state.currentDay}</div>
+                        <h1 class="text-4xl font-black text-blue-900 uppercase italic">Poste ${state.currentPoste}</h1>
+                        <p class="text-2xl font-bold text-slate-400 uppercase leading-none italic">${f.nom} ${f.prenom}</p>
+                    </div>
+                    <div class="bg-${secteurColor}-50 p-6 rounded-[2rem] text-right border border-${secteurColor}-100 shadow-inner">
+                        <span class="text-4xl font-black text-${secteurColor}-800">${dayTotal.toFixed(3)}<span class="text-lg ml-1">kg</span></span>
+                        <div class="text-[10px] text-${secteurColor}-400 font-bold uppercase mt-1">Total Jour ${state.currentDay}</div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border mb-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <input id="p_wei" type="number" step="0.001" placeholder="Poids (kg)" class="p-4 border-2 border-slate-100 rounded-2xl font-bold bg-slate-50 outline-none focus:border-blue-600">
+                    <input id="p_cou" type="number" value="1" placeholder="Nb Poissons" class="p-4 border-2 border-slate-100 rounded-2xl font-bold bg-slate-50 outline-none focus:border-blue-600">
+                    <select id="p_per" class="p-4 border-2 border-slate-100 rounded-2xl font-bold bg-slate-50 uppercase outline-none">
+                        <option value="matin">Matin</option>
+                        <option value="apres-midi">Après-midi</option>
+                    </select>
+                    <button onclick="addW()" class="bg-${secteurColor}-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase italic tracking-widest">
+                        Valider
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-[2.5rem] shadow-sm border overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-slate-400 font-black uppercase text-[10px] tracking-widest">
+                            <tr>
+                                <th class="p-6">Période</th>
+                                <th class="p-6">Poissons</th>
+                                <th class="p-6 text-right">Poids</th>
+                                <th class="p-6"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${dayWeights.slice().reverse().map((w, idx) => {
+                                const realIdx = f.weights.indexOf(dayWeights[dayWeights.length - 1 - idx]);
+                                return `
+                                    <tr class="border-t border-slate-50 hover:bg-slate-50/50">
+                                        <td class="p-6 font-bold text-blue-900 uppercase text-xs italic">${w.period}</td>
+                                        <td class="p-6 font-bold text-blue-400 text-sm italic">${w.fishCount || 0} Poisson(s)</td>
+                                        <td class="p-6 text-right font-black text-blue-900 text-xl italic">${w.weight.toFixed(3)} kg</td>
+                                        <td class="p-6 flex justify-center gap-2">
+                                            <button onclick="editW(${realIdx})" class="p-2 text-blue-200 hover:text-blue-600 transition-colors">
+                                                <i data-lucide="edit-3"></i>
+                                            </button>
+                                            <button onclick="delW(${realIdx})" class="p-2 text-red-200 hover:text-red-500 transition-colors">
+                                                <i data-lucide="trash-2"></i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    ${dayWeights.length === 0 ? '<p class="p-8 text-center text-slate-300 italic">Aucune pesée enregistrée</p>' : ''}
+                </div>
+            `;
+        }
+
+        window.addW = () => {
+            const posteKey = state.currentDay === 1 ? 'posteJ1' : 'posteJ2';
+            const secteurKey = state.currentDay === 1 ? 'secteurJ1' : 'secteurJ2';
+            
+            const f = state.fishermen.find(f => f[posteKey] == state.currentPoste && f[secteurKey] === state.currentSecteur);
+            if(!f) return;
+            
+            const w = parseFloat(document.getElementById('p_wei').value);
+            const c = parseInt(document.getElementById('p_cou').value) || 1;
+            const p = document.getElementById('p_per').value;
+            
+            if(!w || w <= 0) return alert("Veuillez entrer un poids valide");
+            
+            f.weights.push({ 
+                day: state.currentDay,
+                period: p, 
+                weight: w, 
+                fishCount: c 
+            });
+            save();
+            
+            document.getElementById('p_wei').value = '';
+            document.getElementById('p_cou').value = '1';
+        };
+
+        window.editW = (idx) => {
+            const pwd = prompt("Modification réservée. Mot de passe admin :");
+            if(pwd !== "admin") return alert("Accès refusé");
+            
+            const posteKey = state.currentDay === 1 ? 'posteJ1' : 'posteJ2';
+            const secteurKey = state.currentDay === 1 ? 'secteurJ1' : 'secteurJ2';
+            
+            const f = state.fishermen.find(f => f[posteKey] == state.currentPoste && f[secteurKey] === state.currentSecteur);
+            if(!f) return;
+            
+            const w = f.weights[idx];
+            document.getElementById('p_per').value = w.period;
+            document.getElementById('p_wei').value = w.weight;
+            document.getElementById('p_cou').value = w.fishCount;
+            
+            f.weights.splice(idx, 1);
+            save();
+            alert("Données remontées dans le formulaire. Modifiez puis cliquez sur Valider.");
+        };
+
+        window.delW = (idx) => {
+            const pwd = prompt("Suppression réservée. Mot de passe admin :");
+            if(pwd !== "admin") return alert("Accès refusé");
+            
+            const posteKey = state.currentDay === 1 ? 'posteJ1' : 'posteJ2';
+            const secteurKey = state.currentDay === 1 ? 'secteurJ1' : 'secteurJ2';
+            
+            const f = state.fishermen.find(f => f[posteKey] == state.currentPoste && f[secteurKey] === state.currentSecteur);
+            if(!f) return;
+            
+            f.weights.splice(idx, 1);
+            save();
+        };
+
+        // Résultats
+        function renderResultats(container) {
+            container.innerHTML = `
+                <button onclick="nav('index')" class="mb-8 flex items-center text-blue-600 font-bold underline italic">
+                    <i data-lucide="arrow-left" class="mr-2"></i> Retour Accueil
+                </button>
+                
+                <!-- Onglets résultats -->
+                <div class="flex gap-4 mb-8 flex-wrap">
+                    <button onclick="showResult('j1')" id="btn-j1" class="px-6 py-3 rounded-2xl font-black uppercase italic transition-all bg-blue-900 text-white">
+                        Jour 1
+                    </button>
+                    <button onclick="showResult('j2')" id="btn-j2" class="px-6 py-3 rounded-2xl font-black uppercase italic transition-all bg-white text-blue-900 border-2 border-blue-200">
+                        Jour 2
+                    </button>
+                    <button onclick="showResult('general')" id="btn-general" class="px-6 py-3 rounded-2xl font-black uppercase italic transition-all bg-white text-blue-900 border-2 border-blue-200">
+                        🏆 Général
+                    </button>
+                </div>
+                
+                <div id="result-j1">${renderResultDay(1)}</div>
+                <div id="result-j2" class="hidden">${renderResultDay(2)}</div>
+                <div id="result-general" class="hidden">${renderResultGeneral()}</div>
+            `;
+        }
+
+        window.showResult = (tab) => {
+            ['j1', 'j2', 'general'].forEach(t => {
+                document.getElementById(`result-${t}`).classList.toggle('hidden', t !== tab);
+                document.getElementById(`btn-${t}`).classList.toggle('bg-blue-900', t === tab);
+                document.getElementById(`btn-${t}`).classList.toggle('text-white', t === tab);
+                document.getElementById(`btn-${t}`).classList.toggle('bg-white', t !== tab);
+                document.getElementById(`btn-${t}`).classList.toggle('text-blue-900', t !== tab);
+                document.getElementById(`btn-${t}`).classList.toggle('border-2', t !== tab);
+                document.getElementById(`btn-${t}`).classList.toggle('border-blue-200', t !== tab);
+            });
+        };
+
+        function renderResultDay(day) {
+            const posteKey = day === 1 ? 'posteJ1' : 'posteJ2';
+            const secteurKey = day === 1 ? 'secteurJ1' : 'secteurJ2';
+            const dateStr = day === 1 ? state.contestInfo.dateJ1 : state.contestInfo.dateJ2;
+            
+            const sorted = [...state.fishermen]
+                .filter(f => f[posteKey])
+                .sort((a, b) => calc.dayWeight(b, day) - calc.dayWeight(a, day));
+            
+            const rec = calc.dayRecord(day);
+            
+            return `
+                <div class="mb-8">
+                    <h2 class="text-3xl font-black text-blue-900 uppercase italic mb-8 border-l-8 border-blue-600 pl-4">
+                        Classement Jour ${day} <span class="text-lg font-normal text-slate-400">${dateStr}</span>
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-blue-900 p-8 rounded-[2.5rem] text-white shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Poids Total</p>
+                            <p class="text-4xl font-black">${calc.globalDayWeight(day).toFixed(3)} kg</p>
+                        </div>
+                        <div class="bg-blue-600 p-8 rounded-[2.5rem] text-white shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Poissons Sortis</p>
+                            <p class="text-4xl font-black">${calc.globalDayFish(day)}</p>
+                        </div>
+                        <div class="bg-yellow-500 p-8 rounded-[2.5rem] text-blue-900 shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Plus Grosse Prise</p>
+                            <p class="text-3xl font-black">${rec.w.toFixed(3)} kg</p>
+                            <p class="text-[10px] font-black uppercase italic mt-1">${rec.n} ${rec.p}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-[2.5rem] shadow-xl border overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-blue-900 text-white text-[10px] uppercase font-black tracking-widest">
+                                <tr>
+                                    <th class="p-6">Rang</th>
+                                    <th class="p-6">Secteur</th>
+                                    <th class="p-6">Poste</th>
+                                    <th class="p-6">Identité</th>
+                                    <th class="p-6 text-right">Poids</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sorted.map((f, i) => {
+                                    const secteurColor = f[secteurKey] === 'carpodrome' ? 'red' : 'emerald';
+                                    const secteurName = f[secteurKey] === 'carpodrome' ? 'Carpo' : 'Étang';
+                                    return `
+                                        <tr class="border-b border-slate-50 last:border-0 hover:bg-blue-50/50">
+                                            <td class="p-6">
+                                                <span class="w-12 h-12 flex items-center justify-center rounded-2xl font-black text-xl ${i===0?'bg-yellow-400 text-white shadow-lg':i===1?'bg-slate-300 text-white':i===2?'bg-orange-400 text-white':'bg-slate-100 text-slate-400'}">
+                                                    ${i+1}
+                                                </span>
+                                            </td>
+                                            <td class="p-6">
+                                                <span class="bg-${secteurColor}-100 text-${secteurColor}-600 px-3 py-1 rounded-full text-xs font-bold uppercase">${secteurName}</span>
+                                            </td>
+                                            <td class="p-6 font-black text-blue-600 text-xl italic">${f[posteKey]}</td>
+                                            <td class="p-6">
+                                                <div class="font-black text-blue-900 uppercase text-lg leading-none italic">${f.nom}</div>
+                                                <div class="text-[10px] font-bold text-slate-400 mt-1 uppercase italic">${f.prenom}</div>
+                                            </td>
+                                            <td class="p-6 text-right font-black text-2xl text-blue-900 tracking-tighter">${calc.dayWeight(f, day).toFixed(3)} kg</td>
+                                        </tr>`;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResultGeneral() {
+            const sorted = [...state.fishermen]
+                .filter(f => f.posteJ1 || f.posteJ2)
+                .sort((a, b) => calc.totalWeight(b) - calc.totalWeight(a));
+            
+            const rec = calc.globalRecord();
+            const totalPoids = state.fishermen.reduce((acc, f) => acc + calc.totalWeight(f), 0);
+            const totalPoissons = state.fishermen.reduce((acc, f) => acc + calc.totalFishCount(f), 0);
+            
+            return `
+                <div class="mb-8">
+                    <h2 class="text-3xl font-black text-blue-900 uppercase italic mb-8 border-l-8 border-yellow-500 pl-4">
+                        🏆 Classement Général <span class="text-lg font-normal text-slate-400">Cumul 2 Jours</span>
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-blue-900 to-blue-700 p-8 rounded-[2.5rem] text-white shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Poids Total 2 Jours</p>
+                            <p class="text-4xl font-black">${totalPoids.toFixed(3)} kg</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-600 to-blue-400 p-8 rounded-[2.5rem] text-white shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Poissons Total</p>
+                            <p class="text-4xl font-black">${totalPoissons}</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-yellow-500 to-yellow-400 p-8 rounded-[2.5rem] text-blue-900 shadow-xl">
+                            <p class="text-xs font-black uppercase mb-1 opacity-60 italic">Record du Concours</p>
+                            <p class="text-3xl font-black">${rec.w.toFixed(3)} kg</p>
+                            <p class="text-[10px] font-black uppercase italic mt-1">${rec.n} ${rec.p}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-[2.5rem] shadow-xl border overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-blue-900 text-[10px] uppercase font-black tracking-widest">
+                                <tr>
+                                    <th class="p-6">Rang</th>
+                                    <th class="p-6">Identité</th>
+                                    <th class="p-6 text-center">Jour 1</th>
+                                    <th class="p-6 text-center">Jour 2</th>
+                                    <th class="p-6 text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sorted.map((f, i) => `
+                                    <tr class="border-b border-slate-50 last:border-0 hover:bg-yellow-50/50">
+                                        <td class="p-6">
+                                            <span class="w-14 h-14 flex items-center justify-center rounded-2xl font-black text-2xl ${i===0?'bg-yellow-400 text-white shadow-lg':i===1?'bg-slate-300 text-white':i===2?'bg-orange-400 text-white':'bg-slate-100 text-slate-400'}">
+                                                ${i+1}
+                                            </span>
+                                        </td>
+                                        <td class="p-6">
+                                            <div class="font-black text-blue-900 uppercase text-xl leading-none italic">${f.nom}</div>
+                                            <div class="text-xs font-bold text-slate-400 mt-1 uppercase italic">${f.prenom}</div>
+                                        </td>
+                                        <td class="p-6 text-center">
+                                            <div class="font-bold text-slate-600">${calc.dayWeight(f, 1).toFixed(3)} kg</div>
+                                            <div class="text-[9px] text-slate-400">${f.secteurJ1 === 'carpodrome' ? 'Carpo' : 'Étang'} P${f.posteJ1 || '-'}</div>
+                                        </td>
+                                        <td class="p-6 text-center">
+                                            <div class="font-bold text-slate-600">${calc.dayWeight(f, 2).toFixed(3)} kg</div>
+                                            <div class="text-[9px] text-slate-400">${f.secteurJ2 === 'carpodrome' ? 'Carpo' : 'Étang'} P${f.posteJ2 || '-'}</div>
+                                        </td>
+                                        <td class="p-6 text-right font-black text-3xl text-blue-900 tracking-tighter">${calc.totalWeight(f).toFixed(3)} kg</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Paramètres Admin
+        function renderSettings(container) {
+            container.innerHTML = `
+                <button onclick="nav('index')" class="mb-8 flex items-center text-blue-600 font-bold underline italic">
+                    <i data-lucide="arrow-left" class="mr-2"></i> Retour
+                </button>
+                
+                <div class="bg-white p-10 rounded-[2.5rem] shadow-xl border max-w-lg mx-auto">
+                    <h2 class="text-2xl font-black text-blue-900 mb-8 uppercase italic">Paramètres Admin</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Titre du Concours</label>
+                            <input id="set_title" value="${state.contestInfo.title}" class="w-full p-4 border rounded-2xl font-bold bg-slate-50 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Date Jour 1</label>
+                            <input id="set_dateJ1" value="${state.contestInfo.dateJ1}" class="w-full p-4 border rounded-2xl font-bold bg-slate-50 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400 ml-2">Date Jour 2</label>
+                            <input id="set_dateJ2" value="${state.contestInfo.dateJ2}" class="w-full p-4 border rounded-2xl font-bold bg-slate-50 outline-none">
+                        </div>
+                        
+                        <button onclick="updateSet()" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl shadow-xl uppercase italic">
+                            Enregistrer
+                        </button>
+                        
+                        <hr class="my-6">
+                        
+                        <button onclick="resetJ1()" class="w-full bg-orange-50 text-orange-600 font-bold py-4 rounded-2xl italic">
+                            Réinitialiser Jour 1 (postes + pesées)
+                        </button>
+                        <button onclick="resetJ2()" class="w-full bg-orange-50 text-orange-600 font-bold py-4 rounded-2xl italic">
+                            Réinitialiser Jour 2 (postes + pesées)
+                        </button>
+                        <button onclick="resetAll()" class="w-full bg-red-50 text-red-600 font-bold py-4 rounded-2xl italic">
+                            🗑️ Tout supprimer (⚠️ irréversible)
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.updateSet = () => {
+            state.contestInfo.title = document.getElementById('set_title').value;
+            state.contestInfo.dateJ1 = document.getElementById('set_dateJ1').value;
+            state.contestInfo.dateJ2 = document.getElementById('set_dateJ2').value;
+            save();
+            nav('index');
+        };
+
+        window.resetJ1 = () => {
+            if(!confirm("Réinitialiser les postes et pesées du Jour 1 ?")) return;
+            state.fishermen.forEach(f => {
+                f.secteurJ1 = null;
+                f.posteJ1 = null;
+                f.secteurJ2 = null;
+                f.posteJ2 = null;
+                f.weights = f.weights.filter(w => w.day !== 1);
+            });
+            save();
+            alert("Jour 1 réinitialisé");
+        };
+
+        window.resetJ2 = () => {
+            if(!confirm("Réinitialiser les postes et pesées du Jour 2 ?")) return;
+            state.fishermen.forEach(f => {
+                f.posteJ2 = null;
+                f.weights = f.weights.filter(w => w.day !== 2);
+            });
+            save();
+            alert("Jour 2 réinitialisé");
+        };
+
+        window.resetAll = () => {
+            if(!confirm("Supprimer TOUTES les données du concours ? Cette action est irréversible.")) return;
+            if(!confirm("Êtes-vous vraiment sûr ?")) return;
+            state.fishermen = [];
+            save();
+            nav('index');
+        };
 
         // Démarrage
-        chargerDonnees();
+        render();
     </script>
 </body>
 </html>
